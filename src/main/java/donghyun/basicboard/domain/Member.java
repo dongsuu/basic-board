@@ -27,8 +27,7 @@ public class Member extends DateEntity{
     @NotEmpty(message = "비밀번호는 필수 속성입니다.")
     private String userPassword;
 
-    public Member(LocalDateTime createDate, LocalDateTime lastModifiedDate) {
-        super(createDate, lastModifiedDate);
+    public Member() {
     }
 
     public void createMember(String name, String nickname, int age, String userId, String userPassword){

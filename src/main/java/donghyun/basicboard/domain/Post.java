@@ -24,7 +24,6 @@ public class Post extends DateEntity{
     @JoinColumn(name = "member_id")
     private Member author;
 
-    @NotEmpty
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "board_id")
     private Board board;
@@ -36,12 +35,11 @@ public class Post extends DateEntity{
     @JoinColumn(name = "upload_file_id")
     private List<UploadFileEntity> uploadFiles = new ArrayList<>();
 
-    public Post(LocalDateTime createDate, LocalDateTime lastModifiedDate) {
-        super(createDate, lastModifiedDate);
+    public Post() {
     }
 
-    public Post(LocalDateTime createDate, LocalDateTime lastModifiedDate, String title, Member author, Board board, String content) {
-        super(createDate, lastModifiedDate);
+
+    public void createPost(String title, Member author, Board board, String content){
         this.title = title;
         this.author = author;
         this.board = board;

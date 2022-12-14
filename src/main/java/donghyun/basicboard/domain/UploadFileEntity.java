@@ -15,6 +15,9 @@ public class UploadFileEntity {
 
     private UploadFile uploadFile;
 
+    public UploadFileEntity() {
+    }
+
     public UploadFileEntity(String uploadFileName, String storeFileName){
         this.uploadFile = new UploadFile(uploadFileName, storeFileName);
     }

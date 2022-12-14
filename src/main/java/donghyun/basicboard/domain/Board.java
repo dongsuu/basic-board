@@ -3,10 +3,7 @@ package donghyun.basicboard.domain;
 import lombok.Getter;
 import lombok.Setter;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
+import javax.persistence.*;
 
 @Entity
 @Getter
@@ -15,5 +12,13 @@ public class Board {
     @Column(name = "board_id")
     private Long id;
 
-    private String name;
+    @Enumerated(value = EnumType.STRING)
+    private BoardName name;
+
+    public Board() {
+    }
+
+    public Board(BoardName name) {
+        this.name = name;
+    }
 }

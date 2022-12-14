@@ -1,0 +1,33 @@
+package donghyun.basicboard.repository;
+
+import donghyun.basicboard.domain.Comment;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Repository;
+
+import javax.persistence.EntityManager;
+import java.util.List;
+
+@Repository
+@RequiredArgsConstructor
+public class CommentRepository {
+
+    private final EntityManager em;
+
+    public Long save(Comment comment){
+        em.persist(comment);
+        return comment.getId();
+    }
+
+    public Comment findById(Long commentId){
+        Comment findComment = em.find(Comment.class, commentId);
+        return findComment;
+    }
+
+    public List<Comment> findAll(){
+        String jpql = "select c from Comment c";
+        List<Comment> findComments = em.createQuery(jpql, Comment.class)
+                .getResultList();
+        return findComments;
+    }
+
+}

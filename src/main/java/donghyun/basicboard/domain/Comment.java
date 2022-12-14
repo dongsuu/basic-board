@@ -22,8 +22,7 @@ public class Comment extends DateEntity{
     @JoinColumn(name = "post_id")
     private Post post;
 
-    public Comment(LocalDateTime createDate, LocalDateTime lastModifiedDate) {
-        super(createDate, lastModifiedDate);
+    public Comment() {
     }
 
     public void createComment(Member author, String content, Post post){
