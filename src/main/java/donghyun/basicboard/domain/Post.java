@@ -46,6 +46,12 @@ public class Post extends DateEntity{
         this.content = content;
     }
 
+    public void updatePost(String title, Board board, String content){
+        this.title = title;
+        this.board = board;
+        this.content = content;
+    }
+
     public void addUploadFile(UploadFileEntity... uploadFiles){
         this.uploadFiles.addAll(Arrays.asList(uploadFiles));
     }

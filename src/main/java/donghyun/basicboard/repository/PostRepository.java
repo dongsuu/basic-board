@@ -30,4 +30,8 @@ public class PostRepository {
         return posts;
     }
 
+    public void remove(Post post){
+        em.remove(post);
+    }
+
 }

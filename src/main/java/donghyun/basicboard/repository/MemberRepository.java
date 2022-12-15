@@ -37,4 +37,8 @@ public class MemberRepository {
                 .getResultList();
         return findMembers;
     }
+
+    public void remove(Member member){
+        em.remove(member);
+    }
 }

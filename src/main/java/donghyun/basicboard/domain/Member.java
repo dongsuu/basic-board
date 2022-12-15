@@ -36,7 +36,10 @@ public class Member extends DateEntity{
         this.age = age;
         this.userId = userId;
         this.userPassword = userPassword;
+    }
 
+    public void changeNickname(String nickname){
+        this.nickname = nickname;
     }
 
 }

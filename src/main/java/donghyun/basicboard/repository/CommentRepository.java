@@ -1,5 +1,6 @@
 package donghyun.basicboard.repository;
 
+import donghyun.basicboard.domain.BoardName;
 import donghyun.basicboard.domain.Comment;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
@@ -23,11 +24,23 @@ public class CommentRepository {
         return findComment;
     }
 
+    public List<Comment> findAllByBoardName(BoardName boardName){
+        String jpql = "select c from Comment c where c.post.board.name = :boardName";
+        List<Comment> result = em.createQuery(jpql, Comment.class)
+                .setParameter("boardName", boardName)
+                .getResultList();
+        return result;
+    }
+
     public List<Comment> findAll(){
         String jpql = "select c from Comment c";
         List<Comment> findComments = em.createQuery(jpql, Comment.class)
                 .getResultList();
         return findComments;
+    }
+
+    public void remove(Comment comment){
+        em.remove(comment);
     }
 
 }
