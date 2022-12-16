@@ -2,13 +2,16 @@ package donghyun.basicboard.repository;
 
 import donghyun.basicboard.domain.Member;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 @RequiredArgsConstructor
+@Slf4j
 public class MemberRepository {
 
     private final EntityManager em;
@@ -21,6 +24,19 @@ public class MemberRepository {
     public Member findById(Long memberId){
         Member findMember = em.find(Member.class, memberId);
         return findMember;
+    }
+
+    public Optional<Member> findByLoginId(String loginId){
+        String jpql = "select m from Member m where m.userId = :userId";
+        try{
+            Member findMember = em.createQuery(jpql, Member.class)
+                    .setParameter("userId", loginId)
+                    .getSingleResult();
+            return Optional.of(findMember);
+        } catch(Exception e){
+            log.error("존재하지 않는 회원 입니다. error={}", e);
+            return Optional.empty();
+        }
     }
 
     public Member findByNickname(String nickname){

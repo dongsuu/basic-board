@@ -6,6 +6,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotEmpty;
 import java.time.LocalDateTime;
 
@@ -17,14 +18,11 @@ public class Member extends DateEntity{
     @Column(name = "member_id")
     private Long id;
 
-    @NotEmpty(message = "이름은 필수 속성입니다.")
     private String name;
-    @NotEmpty(message = "닉네임은 필수 속성입니다.")
     private String nickname;
     private int age;
-    @NotEmpty(message = "아이디는 필수 속성입니다.")
+
     private String userId;
-    @NotEmpty(message = "비밀번호는 필수 속성입니다.")
     private String userPassword;
 
     public Member() {
