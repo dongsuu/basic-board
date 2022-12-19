@@ -1,7 +1,7 @@
 package donghyun.basicboard.service;
 
-import donghyun.basicboard.domain.Board;
 import donghyun.basicboard.domain.BoardName;
+import donghyun.basicboard.domain.Member;
 import donghyun.basicboard.domain.Post;
 import donghyun.basicboard.repository.PostRepository;
 import lombok.RequiredArgsConstructor;
@@ -43,5 +43,12 @@ public class PostService {
     public void removePost(Long postId){
         Post removePost = postRepository.findById(postId);
         postRepository.remove(removePost);
+    }
+
+    @Transactional
+    public Post createPost(Member author, BoardName boardName, String title, String content) {
+        Post post = new Post();
+        post.createPost(title, author, boardName, content);
+        return post;
     }
 }

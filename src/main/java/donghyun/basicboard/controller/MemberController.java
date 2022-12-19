@@ -1,7 +1,9 @@
 package donghyun.basicboard.controller;
 
 import donghyun.basicboard.controller.session.SessionConst;
+import donghyun.basicboard.domain.Comment;
 import donghyun.basicboard.domain.Member;
+import donghyun.basicboard.domain.Post;
 import donghyun.basicboard.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -16,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
+import java.util.List;
 
 @Controller
 @Slf4j
@@ -84,9 +87,16 @@ public class MemberController {
     @GetMapping("/myInfo")
     public String myInfo(HttpServletRequest request, Model model){
         HttpSession session = request.getSession(false);
-        Member member = (Member) session.getAttribute(SessionConst.LOGIN_MEMBER);
+        Member sessionMember = (Member) session.getAttribute(SessionConst.LOGIN_MEMBER);
 
+        Member member = memberService.findById(sessionMember.getId());
+
+        List<Post> posts = member.getPosts();
+        List<Comment> comments = member.getComments();
         model.addAttribute("member", member);
+        model.addAttribute("postsSize", posts.size());
+        model.addAttribute("commentsSize", comments.size());
+
         return "members/myInfo";
     }
 

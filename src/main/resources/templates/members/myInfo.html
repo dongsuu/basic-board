@@ -13,10 +13,10 @@
     <h3 class="mb-3" th:text="|${member.nickname}님의 정보 입니다.|">로그인 사용자 정보</h3>
     <hr class="my-4">
     <div class="col">
-        <h4 class="mb-4" th:text="|작성 게시글 수: 0|"></h4>
+        <h4 class="mb-4" th:text="|작성 게시글 수: ${postsSize}|"></h4>
     </div>
     <div class="col">
-        <h4 class="mb-4" th:text="|작성 댓글 수: 0|"></h4>
+        <h4 class="mb-4" th:text="|작성 댓글 수: ${commentsSize}|"></h4>
     </div>
     <div class="col">
         <h4 class="mb-4" th:text="|회원 아이디: ${member.userId}|"></h4>

@@ -29,7 +29,7 @@ class PostRepositoryTest {
         boardRepository.save(board);
 
         Post post = new Post();
-        post.createPost("title1", member, board, "hello~~~");
+        post.createPost("title1", member, BoardName.FREE, "hello~~~");
 
         //when
         Long savedId = postRepository.save(post);
@@ -53,11 +53,11 @@ class PostRepositoryTest {
         boardRepository.save(board2);
 
         Post post1 = new Post();
-        post1.createPost("title1", member, board1, "hello~~~");
+        post1.createPost("title1", member, BoardName.FREE, "hello~~~");
         postRepository.save(post1);
 
         Post post2 = new Post();
-        post2.createPost("title2", member, board2, "hihi");
+        post2.createPost("title2", member, BoardName.SPORTS, "hihi");
         postRepository.save(post2);
 
         //when

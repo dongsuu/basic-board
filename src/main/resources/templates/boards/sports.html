@@ -1,0 +1,35 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments/header :: header" />
+<body>
+<div class="container">
+    <div th:replace="fragments/bodyHeader :: bodyHeader" />
+    <div>
+        <h1 >운동 게시판</h1>
+        <table class="table table-bordered table-hover">
+            <thead>
+            <tr>
+                <th scope="col">#</th>
+                <th scope="col">제목</th>
+                <th scope="col">내용</th>
+                <th scope="col">작성자</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="post : ${posts}">
+                <td th:text="${post.id}"></td>
+                <td th:text="${post.title}"></td>
+                <td th:text="${post.content}"></td>
+                <td th:text="${post.author.name}"></td>
+            </tr>
+            </tbody>
+        </table>
+
+        <p>
+            <a class="btn btn-lg btn-secondary" href="/boards/SPORTS/new">글 작성</a>
+        </p>
+    </div>
+    <div th:replace="fragments/footer :: footer" />
+</div> <!-- /container -->
+</body>
+</html>

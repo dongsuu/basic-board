@@ -2,13 +2,9 @@ package donghyun.basicboard.domain;
 
 import lombok.Getter;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.validation.constraints.Min;
-import javax.validation.constraints.NotEmpty;
-import java.time.LocalDateTime;
+import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter
@@ -24,6 +20,12 @@ public class Member extends DateEntity{
 
     private String userId;
     private String userPassword;
+
+    @OneToMany(mappedBy = "author")
+    private List<Post> posts = new ArrayList<>();
+
+    @OneToMany(mappedBy = "author")
+    private List<Comment> comments = new ArrayList<>();
 
     public Member() {
     }

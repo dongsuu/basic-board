@@ -24,7 +24,7 @@ public class Post extends DateEntity{
     @JoinColumn(name = "member_id")
     private Member author;
 
-    @Enumerated
+    @Enumerated(value = EnumType.STRING)
     private BoardName boardName;
 
     @NotEmpty
@@ -43,6 +43,8 @@ public class Post extends DateEntity{
         this.author = author;
         this.boardName = boardName;
         this.content = content;
+
+        author.getPosts().add(this); // 연관관계 편의 메서드
     }
 
     public void updatePost(String title, BoardName boardName, String content){
@@ -50,6 +52,7 @@ public class Post extends DateEntity{
         this.boardName = boardName;
         this.content = content;
     }
+
 
     public void addUploadFile(UploadFileEntity... uploadFiles){
         this.uploadFiles.addAll(Arrays.asList(uploadFiles));

@@ -5,6 +5,7 @@ import donghyun.basicboard.domain.BoardName;
 import donghyun.basicboard.domain.Member;
 import donghyun.basicboard.domain.Post;
 import donghyun.basicboard.service.BoardService;
+import donghyun.basicboard.service.MemberService;
 import donghyun.basicboard.service.PostService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -27,6 +28,7 @@ public class BoardController {
 
     private final BoardService boardService;
     private final PostService postService;
+    private final MemberService memberService;
 
     @GetMapping("/boards")
     public String boards(Model model){
@@ -56,10 +58,12 @@ public class BoardController {
         }
     }
 
+    /**
+     * FREE
+     */
     @GetMapping("/boards/FREE/new")
     public String newPostInFreeBoardForm(Model model){
         PostForm postForm = new PostForm();
-        postForm.setBoardName(BoardName.FREE);
         model.addAttribute("postForm", new PostForm());
         return "boards/posts/free-new";
     }
@@ -72,12 +76,76 @@ public class BoardController {
         if(loginMember == null){
             log.error("로그인 하지 않은 사용자 접근입니다. 혹은 세션이 만료되었을 수 있습니다.");
         }
-        postForm.setAuthor(loginMember);
+
+        Member member = memberService.findById(loginMember.getId());
+
+        postForm.setAuthor(member);
 
         Post post = new Post();
-        post.createPost(postForm.getTitle(), postForm.getAuthor(), BoardName.FREE, postForm.getContent());
+        post.createPost(postForm.getTitle(), postForm.getAuthor(), BoardName.SPORTS, postForm.getContent());
         postService.addPost(post);
         return "redirect:/boards/FREE";
+    }
+
+
+    /**
+     * SPORTS
+     */
+
+    @GetMapping("/boards/SPORTS/new")
+    public String newPostInSportsBoardForm(Model model){
+        PostForm postForm = new PostForm();
+        model.addAttribute("postForm", postForm);
+        return "boards/posts/sports-new";
+    }
+
+    @PostMapping("/boards/SPORTS/new")
+    public String newPostInSportsBoard(@ModelAttribute("postForm") PostForm postForm, HttpServletRequest request){
+        HttpSession session = request.getSession(false);
+        Member loginMember = (Member) session.getAttribute(SessionConst.LOGIN_MEMBER);
+
+        if(loginMember == null){
+            log.error("로그인 하지 않은 사용자 접근입니다. 혹은 세션이 만료되었을 수 있습니다.");
+        }
+
+        Member member = memberService.findById(loginMember.getId());
+
+        postForm.setAuthor(member);
+
+        Post post = new Post();
+        post.createPost(postForm.getTitle(), postForm.getAuthor(), BoardName.SPORTS, postForm.getContent());
+        postService.addPost(post);
+        return "redirect:/boards/SPORTS";
+    }
+
+    /**
+     * STUDY
+     */
+    @GetMapping("/boards/STUDY/new")
+    public String newPostInSportsStudyForm(Model model){
+        PostForm postForm = new PostForm();
+        postForm.setBoardName(BoardName.STUDY);
+        model.addAttribute("postForm", postForm);
+        return "boards/posts/study-new";
+    }
+
+    @PostMapping("/boards/STUDY/new")
+    public String newPostInStudyBoard(@ModelAttribute("postForm") PostForm postForm, HttpServletRequest request){
+        HttpSession session = request.getSession(false);
+        Member loginMember = (Member) session.getAttribute(SessionConst.LOGIN_MEMBER);
+
+        if(loginMember == null){
+            log.error("로그인 하지 않은 사용자 접근입니다. 혹은 세션이 만료되었을 수 있습니다.");
+        }
+
+        Member member = memberService.findById(loginMember.getId());
+
+        postForm.setAuthor(member);
+
+        Post post = new Post();
+        post.createPost(postForm.getTitle(), postForm.getAuthor(), BoardName.STUDY, postForm.getContent());
+        postService.addPost(post);
+        return "redirect:/boards/STUDY";
     }
 
 }

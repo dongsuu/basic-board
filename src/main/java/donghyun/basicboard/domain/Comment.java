@@ -13,12 +13,12 @@ public class Comment extends DateEntity{
     @Column(name = "comment_id")
     private Long id;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")
     private Member author;
     private String content;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "post_id")
     private Post post;
 
@@ -29,5 +29,7 @@ public class Comment extends DateEntity{
         this.author = author;
         this.content = content;
         this.post = post;
+
+        author.getComments().add(this);
     }
 }
