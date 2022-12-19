@@ -1,0 +1,16 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments/header :: header" />
+<body>
+<div class="container">
+    <div th:replace="fragments/bodyHeader :: bodyHeader" />
+    <div>
+        <h3 >게시판 목록</h3>
+        <ul class="list-group" th:each="board: ${boards}">
+            <a th:href="@{boards/{boardName}(boardName=${board.name})}"> <li class="list-group-item" th:text="${board.name}">게시판 이름</li> </a>
+        </ul>
+    </div>
+    <div th:replace="fragments/footer :: footer" />
+</div> <!-- /container -->
+</body>
+</html>

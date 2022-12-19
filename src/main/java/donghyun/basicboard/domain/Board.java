@@ -15,6 +15,7 @@ public class Board {
     @Enumerated(value = EnumType.STRING)
     private BoardName name;
 
+
     public Board() {
     }
 

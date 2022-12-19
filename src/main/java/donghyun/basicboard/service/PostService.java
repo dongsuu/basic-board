@@ -1,6 +1,7 @@
 package donghyun.basicboard.service;
 
 import donghyun.basicboard.domain.Board;
+import donghyun.basicboard.domain.BoardName;
 import donghyun.basicboard.domain.Post;
 import donghyun.basicboard.repository.PostRepository;
 import lombok.RequiredArgsConstructor;
@@ -23,9 +24,14 @@ public class PostService {
     }
 
     @Transactional
-    public void updatePost(Long postId, String title, Board board, String content){
+    public void updatePost(Long postId, String title, BoardName boardName, String content){
         Post updatePost = postRepository.findById(postId);
-        updatePost.updatePost(title, board, content);
+        updatePost.updatePost(title, boardName, content);
+    }
+
+    public List<Post> findByBoardName(BoardName boardName){
+        List<Post> result = postRepository.findByBoardName(boardName);
+        return result;
     }
 
     public List<Post> findAll(){

@@ -24,9 +24,8 @@ public class Post extends DateEntity{
     @JoinColumn(name = "member_id")
     private Member author;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "board_id")
-    private Board board;
+    @Enumerated
+    private BoardName boardName;
 
     @NotEmpty
     private String content;
@@ -39,16 +38,16 @@ public class Post extends DateEntity{
     }
 
 
-    public void createPost(String title, Member author, Board board, String content){
+    public void createPost(String title, Member author, BoardName boardName, String content){
         this.title = title;
         this.author = author;
-        this.board = board;
+        this.boardName = boardName;
         this.content = content;
     }
 
-    public void updatePost(String title, Board board, String content){
+    public void updatePost(String title, BoardName boardName, String content){
         this.title = title;
-        this.board = board;
+        this.boardName = boardName;
         this.content = content;
     }
 

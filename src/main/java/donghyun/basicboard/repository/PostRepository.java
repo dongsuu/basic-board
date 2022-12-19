@@ -1,5 +1,6 @@
 package donghyun.basicboard.repository;
 
+import donghyun.basicboard.domain.BoardName;
 import donghyun.basicboard.domain.Post;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
@@ -21,6 +22,14 @@ public class PostRepository {
     public Post findById(Long postId){
         Post findPost = em.find(Post.class, postId);
         return findPost;
+    }
+
+    public List<Post> findByBoardName(BoardName boardName){
+        String jpql = "select p from Post p where p.boardName = :boardName";
+        List<Post> posts = em.createQuery(jpql, Post.class)
+                .setParameter("boardName", boardName)
+                .getResultList();
+        return posts;
     }
 
     public List<Post> findAll(){
