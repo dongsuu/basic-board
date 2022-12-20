@@ -13,6 +13,7 @@
                 <th scope="col">제목</th>
                 <th scope="col">내용</th>
                 <th scope="col">작성자</th>
+                <th scope="col">상세</th>
             </tr>
             </thead>
             <tbody>
@@ -20,7 +21,8 @@
                 <td th:text="${post.id}"></td>
                 <td th:text="${post.title}"></td>
                 <td th:text="${post.content}"></td>
-                <td th:text="${post.author.name}"></td>
+                <td th:text="${post.author.nickname}"></td>
+                <td> <a class="btn btn-lg btn-secondary" th:href="@{/boards/STUDY/{postId}(postId=${post.id})}"> 상세 정보</a></td>
             </tr>
             </tbody>
         </table>

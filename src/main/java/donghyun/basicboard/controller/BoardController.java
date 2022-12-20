@@ -148,4 +148,57 @@ public class BoardController {
         return "redirect:/boards/STUDY";
     }
 
+    /**
+     * Detail
+     * 게시글 클릭시 댓글을 작성할 수 있는 게시글 세부 페이지로 이동
+     */
+
+    @GetMapping("/boards/FREE/{postId}")
+    public String FreePostDetail(@PathVariable("postId") Long postId, Model model, HttpServletRequest request){
+        Post findPost = postService.findById(postId);
+        model.addAttribute("post", findPost);
+
+        Member loginMember = (Member) request.getSession().getAttribute(SessionConst.LOGIN_MEMBER);
+        Member findMember = memberService.findById(loginMember.getId());
+        model.addAttribute("member", findMember);
+
+        return "boards/posts/detail/free";
+    }
+
+    @GetMapping("/boards/SPORTS/{postId}")
+    public String SportsPostDetail(@PathVariable("postId") Long postId, Model model, HttpServletRequest request){
+        Post findPost = postService.findById(postId);
+        model.addAttribute("post", findPost);
+
+        Member loginMember = (Member) request.getSession().getAttribute(SessionConst.LOGIN_MEMBER);
+        Member findMember = memberService.findById(loginMember.getId());
+        model.addAttribute("member", findMember);
+
+        return "boards/posts/detail/sports";
+    }
+
+    @GetMapping("/boards/STUDY/{postId}")
+    public String StudyPostDetail(@PathVariable("postId") Long postId, Model model, HttpServletRequest request){
+        Post findPost = postService.findById(postId);
+        model.addAttribute("post", findPost);
+
+        Member loginMember = (Member) request.getSession().getAttribute(SessionConst.LOGIN_MEMBER);
+        Member findMember = memberService.findById(loginMember.getId());
+        model.addAttribute("member", findMember);
+
+        return "boards/posts/detail/study";
+    }
+
+    /**
+     * 게시글 수정
+     * TODO
+     */
+
+
+    /**
+     * 게시글 삭제
+     * TODO
+     */
+
+
 }
