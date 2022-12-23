@@ -45,9 +45,10 @@ public class PostService {
     }
 
     @Transactional
-    public void removePost(Long postId){
+    public Post removePost(Long postId){
         Post removePost = postRepository.findById(postId);
         postRepository.remove(removePost);
+        return removePost;
     }
 
     @Transactional

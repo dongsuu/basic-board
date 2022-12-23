@@ -25,8 +25,6 @@ import java.util.List;
 @Slf4j
 @RequiredArgsConstructor
 public class BoardController {
-
-    private final BoardService boardService;
     private final PostService postService;
     private final MemberService memberService;
 
@@ -42,7 +40,7 @@ public class BoardController {
     }
 
     @GetMapping("/boards/{boardName}")
-    public String freeBoard(@PathVariable("boardName") BoardName boardName, Model model){
+    public String BoardByName(@PathVariable("boardName") BoardName boardName, Model model){
         List<Post> result = postService.findByBoardName(boardName);
         model.addAttribute("posts", result);
         if(boardName.name() == "FREE"){
@@ -82,7 +80,7 @@ public class BoardController {
         postForm.setAuthor(member);
 
         Post post = new Post();
-        post.createPost(postForm.getTitle(), postForm.getAuthor(), BoardName.SPORTS, postForm.getContent());
+        post.createPost(postForm.getTitle(), postForm.getAuthor(), BoardName.FREE, postForm.getContent());
         postService.addPost(post);
         return "redirect:/boards/FREE";
     }
@@ -153,6 +151,18 @@ public class BoardController {
      * 게시글 클릭시 댓글을 작성할 수 있는 게시글 세부 페이지로 이동
      */
 
+//    @GetMapping("/boards/{postId}")
+//    public String postDetail(@PathVariable("postId") Long postId, Model model, HttpServletRequest request){
+//        Post findPost = postService.findById(postId);
+//        model.addAttribute("post", findPost);
+//
+//        Member loginMember = (Member) request.getSession().getAttribute(SessionConst.LOGIN_MEMBER);
+//        Member findMember = memberService.findById(loginMember.getId());
+//        model.addAttribute("member", findMember);
+//
+//        return "boards/posts/detail/" + findPost.getBoardName();
+//    }
+
     @GetMapping("/boards/FREE/{postId}")
     public String FreePostDetail(@PathVariable("postId") Long postId, Model model, HttpServletRequest request){
         Post findPost = postService.findById(postId);
@@ -191,14 +201,35 @@ public class BoardController {
 
     /**
      * 게시글 수정
-     * TODO
      */
+    @GetMapping("/boards/edit/{postId}")
+    public String FreePostEditForm(@PathVariable("postId")Long postId, Model model){
+        Post editPost = postService.findById(postId);
 
+        PostEditForm postEditForm = new PostEditForm();
+        postEditForm.setTitle(editPost.getTitle());
+        postEditForm.setBoardName(editPost.getBoardName());
+        postEditForm.setContent(editPost.getContent());
+
+        model.addAttribute("postEditForm", postEditForm);
+        return "boards/posts/edit/editForm";
+    }
+
+    @PostMapping("/boards/edit/{postId}")
+    public String FreePostEdit(@PathVariable("postId") Long postId, @ModelAttribute("postEditForm") PostEditForm postEditForm){
+        Post editPost = postService.findById(postId);
+        postService.updatePost(postId, postEditForm.getTitle(), postEditForm.getBoardName(), postEditForm.getContent());
+        return "redirect:/boards/" + editPost.getBoardName();
+    }
 
     /**
      * 게시글 삭제
-     * TODO
      */
 
+    @GetMapping("/boards/delete/{postId}")
+    public String FreePostDelete(@PathVariable("postId") Long postId){
+        Post removePost = postService.removePost(postId);
+        return "redirect:/boards/" + removePost.getBoardName();
+    }
 
 }
