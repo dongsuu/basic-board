@@ -32,6 +32,14 @@ public class CommentRepository {
         return result;
     }
 
+    public List<Comment> findAllByPostId(Long postId){
+        String jpql = "select c from Comment c where c.post.id = :postId";
+        List<Comment> result = em.createQuery(jpql, Comment.class)
+                .setParameter("postId", postId)
+                .getResultList();
+        return result;
+    }
+
     public List<Comment> findAll(){
         String jpql = "select c from Comment c";
         List<Comment> findComments = em.createQuery(jpql, Comment.class)

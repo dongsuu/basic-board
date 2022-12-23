@@ -19,6 +19,7 @@ public class CommentService {
 
     private final CommentRepository commentRepository;
 
+    @Transactional
     public Long addComment(Comment comment){
         commentRepository.save(comment);
         return comment.getId();
@@ -27,6 +28,11 @@ public class CommentService {
     public List<Comment> findAllByBoardName(BoardName boardName){
         List<Comment> allByBoardName = commentRepository.findAllByBoardName(boardName);
         return allByBoardName;
+    }
+
+    public List<Comment> findAllByPostId(Long postId){
+        List<Comment> result = commentRepository.findAllByPostId(postId);
+        return result;
     }
 
     public void removeComment(Long commentId){

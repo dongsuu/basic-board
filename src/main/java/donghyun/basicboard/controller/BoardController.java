@@ -2,9 +2,11 @@ package donghyun.basicboard.controller;
 
 import donghyun.basicboard.controller.session.SessionConst;
 import donghyun.basicboard.domain.BoardName;
+import donghyun.basicboard.domain.Comment;
 import donghyun.basicboard.domain.Member;
 import donghyun.basicboard.domain.Post;
 import donghyun.basicboard.service.BoardService;
+import donghyun.basicboard.service.CommentService;
 import donghyun.basicboard.service.MemberService;
 import donghyun.basicboard.service.PostService;
 import lombok.RequiredArgsConstructor;
@@ -27,6 +29,7 @@ import java.util.List;
 public class BoardController {
     private final PostService postService;
     private final MemberService memberService;
+    private final CommentService commentService;
 
     @GetMapping("/boards")
     public String boards(Model model){
@@ -171,6 +174,10 @@ public class BoardController {
         Member loginMember = (Member) request.getSession().getAttribute(SessionConst.LOGIN_MEMBER);
         Member findMember = memberService.findById(loginMember.getId());
         model.addAttribute("member", findMember);
+        model.addAttribute("commentForm", new CommentForm());
+
+        List<Comment> findComments = commentService.findAllByPostId(postId);
+        model.addAttribute("comments", findComments);
 
         return "boards/posts/detail/free";
     }
@@ -183,6 +190,10 @@ public class BoardController {
         Member loginMember = (Member) request.getSession().getAttribute(SessionConst.LOGIN_MEMBER);
         Member findMember = memberService.findById(loginMember.getId());
         model.addAttribute("member", findMember);
+        model.addAttribute("commentForm", new CommentForm());
+
+        List<Comment> findComments = commentService.findAllByPostId(postId);
+        model.addAttribute("comments", findComments);
 
         return "boards/posts/detail/sports";
     }
@@ -195,6 +206,10 @@ public class BoardController {
         Member loginMember = (Member) request.getSession().getAttribute(SessionConst.LOGIN_MEMBER);
         Member findMember = memberService.findById(loginMember.getId());
         model.addAttribute("member", findMember);
+        model.addAttribute("commentForm", new CommentForm());
+
+        List<Comment> findComments = commentService.findAllByPostId(postId);
+        model.addAttribute("comments", findComments);
 
         return "boards/posts/detail/study";
     }

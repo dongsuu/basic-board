@@ -30,13 +30,19 @@
     <hr>
     <div>
         <h2>댓글</h2>
-        <form>
-            <textarea type="text" class="form-control" placeholder="댓글을 입력하세요"></textarea>
+        <form role="form" method="post" th:object="${commentForm}" th:action="@{/comments/new/} + ${post.id}">
+            <textarea type="text" class="form-control" placeholder="댓글을 입력하세요" th:field="*{content}"></textarea>
             <button type="submit" class="btn btn-primary">댓글 작성</button>
         </form>
         <hr>
-        <div>
-            <!--            댓글 작성 로직-->
+        <div class="list-group">
+            <div class="list-group-item list-group-item-action flex-column" th:each="comment: ${comments}">
+                <div class="d-flex w-100 justify-content-between">
+                    <h5 class="mb-1" th:text="${comment.author.name}">댓글 작성자</h5>
+                    <small th:text="${comment.lastModifiedDate}">댓글 작성일</small>
+                </div>
+                <p class="mb-1" th:text="${comment.content}">댓글 내용</p>
+            </div>
         </div>
     </div>
     <div th:replace="fragments/footer :: footer" />
