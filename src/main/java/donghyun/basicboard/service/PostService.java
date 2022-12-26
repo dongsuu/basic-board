@@ -3,6 +3,7 @@ package donghyun.basicboard.service;
 import donghyun.basicboard.domain.BoardName;
 import donghyun.basicboard.domain.Member;
 import donghyun.basicboard.domain.Post;
+import donghyun.basicboard.repository.CommentRepository;
 import donghyun.basicboard.repository.PostRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -16,6 +17,7 @@ import java.util.List;
 public class PostService {
 
     private final PostRepository postRepository;
+    private final CommentRepository commentRepository;
 
     @Transactional
     public Long addPost(Post post){
@@ -48,6 +50,7 @@ public class PostService {
     public Post removePost(Long postId){
         Post removePost = postRepository.findById(postId);
         postRepository.remove(removePost);
+
         return removePost;
     }
 

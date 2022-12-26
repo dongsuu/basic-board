@@ -30,7 +30,7 @@ class CommentRepositoryTest {
         boardRepository.save(board);
 
         Post post = new Post();
-        post.createPost("title", member, board, "content!!");
+        post.createPost("title", member, board.getName(), "content!!");
         postRepository.save(post);
 
         Comment comment = new Comment();
@@ -65,8 +65,8 @@ class CommentRepositoryTest {
 
         Post post1 = new Post();
         Post post2 = new Post();
-        post1.createPost("title", member1, board1, "content!!");
-        post2.createPost("title", member2, board2, "board2 content!!");
+        post1.createPost("title", member1, board1.getName(), "content!!");
+        post2.createPost("title", member2, board2.getName(), "board2 content!!");
         postRepository.save(post1);
         postRepository.save(post2);
 

@@ -218,7 +218,7 @@ public class BoardController {
      * 게시글 수정
      */
     @GetMapping("/boards/edit/{postId}")
-    public String FreePostEditForm(@PathVariable("postId")Long postId, Model model){
+    public String postEditForm(@PathVariable("postId")Long postId, Model model){
         Post editPost = postService.findById(postId);
 
         PostEditForm postEditForm = new PostEditForm();
@@ -231,7 +231,7 @@ public class BoardController {
     }
 
     @PostMapping("/boards/edit/{postId}")
-    public String FreePostEdit(@PathVariable("postId") Long postId, @ModelAttribute("postEditForm") PostEditForm postEditForm){
+    public String postEdit(@PathVariable("postId") Long postId, @ModelAttribute("postEditForm") PostEditForm postEditForm){
         Post editPost = postService.findById(postId);
         postService.updatePost(postId, postEditForm.getTitle(), postEditForm.getBoardName(), postEditForm.getContent());
         return "redirect:/boards/" + editPost.getBoardName();
@@ -242,8 +242,8 @@ public class BoardController {
      */
 
     @GetMapping("/boards/delete/{postId}")
-    public String FreePostDelete(@PathVariable("postId") Long postId){
-        Post removePost = postService.removePost(postId);
+    public String postDelete(@PathVariable("postId") Long postId){
+        Post removePost = postService.removePost(postId); // 영속성 전이 (CascadeType.REMOVE) -> 연관된 댓글도 함께 여기서 삭제된다.
         return "redirect:/boards/" + removePost.getBoardName();
     }
 

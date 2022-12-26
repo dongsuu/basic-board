@@ -38,7 +38,10 @@
         <div class="list-group">
             <div class="list-group-item list-group-item-action flex-column" th:each="comment: ${comments}">
                 <div class="d-flex w-100 justify-content-between">
-                    <h5 class="mb-1" th:text="${comment.author.name}">댓글 작성자</h5>
+                    <div>
+                        <span class="mb-1" th:if="${comment.author.id} == ${post.author.id}">글쓴이: </span>
+                        <span class="mb-1 font-weight-bold" th:text="${comment.author.nickname}">댓글 작성자</span>
+                    </div>
                     <small th:text="${comment.lastModifiedDate}">댓글 작성일</small>
                 </div>
                 <p class="mb-1" th:text="${comment.content}">댓글 내용</p>
