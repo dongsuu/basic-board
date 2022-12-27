@@ -12,7 +12,7 @@ import java.util.List;
 @Getter
 public class Post extends DateEntity{
 
-    @Id @GeneratedValue
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "post_id")
     private Long id;
 

@@ -4,12 +4,14 @@ import lombok.Getter;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter
 public class Comment extends DateEntity{
 
-    @Id @GeneratedValue
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "comment_id")
     private Long id;
 
@@ -22,6 +24,13 @@ public class Comment extends DateEntity{
     @JoinColumn(name = "post_id")
     private Post post;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "parent_comment_id")
+    private Comment parentComment;
+
+    @OneToMany(mappedBy = "parentComment", cascade = CascadeType.ALL)
+    private List<Comment> replies = new ArrayList<>();
+
     public Comment() {
     }
 
@@ -31,5 +40,10 @@ public class Comment extends DateEntity{
         this.post = post;
 
         author.getComments().add(this);
+    }
+
+    public void addReply(Comment child) {
+        this.replies.add(child);
+        child.parentComment = this;
     }
 }

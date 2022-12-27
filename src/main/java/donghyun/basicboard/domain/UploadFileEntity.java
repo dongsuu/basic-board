@@ -9,7 +9,7 @@ import java.time.LocalDateTime;
 @Table(name = "UploadFile")
 @Getter
 public class UploadFileEntity {
-    @Id @GeneratedValue
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "upload_file_id")
     private Long id;
 

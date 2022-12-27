@@ -30,21 +30,41 @@
     <hr>
     <div>
         <h2>댓글</h2>
-        <form role="form" method="post" th:object="${commentForm}" th:action="@{/comments/new/} + ${post.id}">
-            <textarea type="text" class="form-control" placeholder="댓글을 입력하세요" th:field="*{content}"></textarea>
-            <button type="submit" class="btn btn-primary">댓글 작성</button>
+        <form th:if="!${reply}" role="form" method="post" th:object="${commentForm}" th:action="@{/comments/new/} + ${post.id}">
+            <textarea th:if="!${reply}" type="text" class="form-control" placeholder="댓글을 입력하세요" th:field="*{content}"></textarea>
+            <button th:if="!${reply}" type="submit" class="btn btn-primary">댓글 작성</button>
+        </form>
+        <form th:if="${reply}" role="form" method="post" th:object="${commentForm}" th:action="@{/comments/reply/new/} + ${comment.id}">
+            <textarea th:if="${reply}" type="text" class="form-control" placeholder="대댓글을 입력하세요" th:field="*{content}"></textarea>
+            <button th:if="${reply}" type="submit" class="btn btn-primary">대댓글 작성</button>
         </form>
         <hr>
         <div class="list-group">
-            <div class="list-group-item list-group-item-action flex-column" th:each="comment: ${comments}">
-                <div class="d-flex w-100 justify-content-between">
-                    <div>
-                        <span class="mb-1" th:if="${comment.author.id} == ${post.author.id}">글쓴이: </span>
-                        <span class="mb-1 font-weight-bold" th:text="${comment.author.nickname}">댓글 작성자</span>
-                    </div>
-                    <small th:text="${comment.lastModifiedDate}">댓글 작성일</small>
-                </div>
-                <p class="mb-1" th:text="${comment.content}">댓글 내용</p>
+            <div class="list-group-item list-group-item-action flex-column" th:each="comment: ${comments}" th:if="${comment.parentComment == null}">
+                <th:blcok th:if="${comment.parentComment == null}">
+                    <ul>
+                        <li>
+                            <div class="d-flex w-100 justify-content-between">
+                                <span class="mb-1" th:if="${comment.author.id} == ${post.author.id}">글쓴이: </span>
+                                <span class="mb-1 font-weight-bold" th:text="${comment.author.nickname}">댓글 작성자</span>
+
+                                <small> <a th:href="@{/comments/reply/new/{commentId}(commentId=${comment.id})}">대댓글 작성</a></small>
+                                <small th:text="${comment.lastModifiedDate}">댓글 작성일</small>
+                            </div>
+                            <p class="mb-1" th:text="${comment.content}">댓글 내용</p>
+                            <ul>
+                                <div class="d-flex w-100 justify-content-between" th:each="reply: ${comment.replies}">
+                                    <li>
+                                        <span class="mb-1" th:if="${reply.author.id} == ${post.author.id}">글쓴이: </span>
+                                        <span class="mb-1 font-weight-bold" th:text="${reply.author.nickname}">대댓글 작성자</span>
+                                        <small th:text="${reply.lastModifiedDate}">대댓글 작성일</small>
+                                        <p class="mb-1" th:text="${reply.content}">대댓글 내용</p>
+                                    </li>
+                                </div>
+                            </ul>
+                        </li>
+                    </ul>
+                </th:blcok>
             </div>
         </div>
     </div>

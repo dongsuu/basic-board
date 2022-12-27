@@ -25,6 +25,20 @@ public class CommentService {
         return comment.getId();
     }
 
+    @Transactional
+    public Long addReply(Comment parent, Comment child){
+        Long saveId = commentRepository.save(child);
+        Comment parentComment = commentRepository.findById(parent.getId());
+        Comment childComment = commentRepository.findById(saveId);
+        parentComment.addReply(childComment);
+        return saveId;
+    }
+
+    public Comment findById(Long commentId){
+        Comment findComment = commentRepository.findById(commentId);
+        return findComment;
+    }
+
     public List<Comment> findAllByBoardName(BoardName boardName){
         List<Comment> allByBoardName = commentRepository.findAllByBoardName(boardName);
         return allByBoardName;
@@ -38,5 +52,10 @@ public class CommentService {
     public void removeComment(Long commentId){
         Comment removeComment = commentRepository.findById(commentId);
         commentRepository.remove(removeComment);
+    }
+
+    public List<Comment> findAllReplies(Long commentId) {
+        Comment parentComment = commentRepository.findById(commentId);
+        return parentComment.getReplies();
     }
 }

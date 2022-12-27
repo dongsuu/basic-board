@@ -1,4 +1,4 @@
-package donghyun.basicboard.controller;
+package donghyun.basicboard.controller.form;
 
 import lombok.Data;
 

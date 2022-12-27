@@ -1,5 +1,7 @@
 package donghyun.basicboard.controller;
 
+import donghyun.basicboard.controller.form.LoginForm;
+import donghyun.basicboard.controller.form.MemberForm;
 import donghyun.basicboard.controller.session.SessionConst;
 import donghyun.basicboard.domain.Comment;
 import donghyun.basicboard.domain.Member;
