@@ -81,4 +81,25 @@ public class CommentController {
     }
 
 
+    /**
+     * 댓글 삭제
+     */
+    @GetMapping("/comments/delete/{commentId}")
+    public String deleteComment(@PathVariable("commentId") Long commentId){
+        Comment comment = commentService.findById(commentId);
+        commentService.removeComment(commentId);
+        return "redirect:/boards/" +  comment.getPost().getBoardName() + "/" + comment.getPost().getId();
+    }
+
+    /**
+     * 대댓글 삭제
+     */
+    @GetMapping("/comments/reply/delete/{replyId}")
+    public String deleteReply(@PathVariable("replyId") Long commentId){
+        Comment comment = commentService.findById(commentId);
+        commentService.removeComment(commentId);
+        return "redirect:/boards/" +  comment.getPost().getBoardName() + "/" + comment.getPost().getId();
+    }
+
+
 }

@@ -28,7 +28,7 @@ import java.util.List;
 @Controller
 @Slf4j
 @RequiredArgsConstructor
-public class BoardController {
+public class PostController {
     private final PostService postService;
     private final MemberService memberService;
     private final CommentService commentService;

@@ -49,6 +49,7 @@ public class CommentService {
         return result;
     }
 
+    @Transactional
     public void removeComment(Long commentId){
         Comment removeComment = commentRepository.findById(commentId);
         commentRepository.remove(removeComment);

@@ -49,6 +49,7 @@
                                 <span class="mb-1 font-weight-bold" th:text="${comment.author.nickname}">댓글 작성자</span>
 
                                 <small> <a th:href="@{/comments/reply/new/{commentId}(commentId=${comment.id})}">대댓글 작성</a></small>
+                                <small> <a th:href="@{/comments/delete/{commentId}(commentId=${comment.id})}" th:if="${comment.author.id} == ${member.id}">삭제</a></small>
                                 <small th:text="${comment.lastModifiedDate}">댓글 작성일</small>
                             </div>
                             <p class="mb-1" th:text="${comment.content}">댓글 내용</p>
@@ -57,6 +58,7 @@
                                     <li>
                                         <span class="mb-1" th:if="${reply.author.id} == ${post.author.id}">글쓴이: </span>
                                         <span class="mb-1 font-weight-bold" th:text="${reply.author.nickname}">대댓글 작성자</span>
+                                        <small> <a th:href="@{/comments/reply/delete/{replyId}(replyId=${reply.id})}" th:if="${reply.author.id} == ${member.id}">삭제</a></small>
                                         <small th:text="${reply.lastModifiedDate}">대댓글 작성일</small>
                                         <p class="mb-1" th:text="${reply.content}">대댓글 내용</p>
                                     </li>
