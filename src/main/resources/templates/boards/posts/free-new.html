@@ -6,7 +6,7 @@
     <div th:replace="fragments/bodyHeader :: bodyHeader" />
     <div>
         <h1 >자유 게시판 - 글 작성</h1>
-        <form role="form" action="/boards/FREE/new" th:object="${postForm}" method="post">
+        <form role="form" action="/boards/FREE/new" th:object="${postForm}" method="post" enctype="multipart/form-data">
             <div class="form-group">
                 <label th:for="title">제목</label>
                 <input type="text" th:field="*{title}" class="form-control" placeholder="제목을 입력하세요" th:class="${#fields.hasErrors('title')}? 'form-control fieldError' : 'form-control'">
@@ -17,6 +17,12 @@
                 <textarea th:field="*{content}" class="form-control" placeholder="내용을 입력하세요">내용 입력</textarea>
 <!--                <input type="text" th:field="*{content}" class="form-control" placeholder="내용을 입력하세요" th:class="${#fields.hasErrors('content')}? 'form-control fieldError' : 'form-control'">-->
                 <p th:if="${#fields.hasErrors('content')}" th:errors="*{content}">Incorrect date</p>
+            </div>
+            <div class="form-group">
+                <label class="mb-3">첨부 파일</label>
+                <ul>
+                    <li class="form-control">첨부 파일들<input type="file" name="uploadFiles" multiple="multiple"></li>
+                </ul>
             </div>
             <button type="submit" class="btn btn-primary">글 작성완료</button>
         </form>

@@ -54,10 +54,10 @@ public class PostService {
         return removePost;
     }
 
-    @Transactional
-    public Post createPost(Member author, BoardName boardName, String title, String content) {
-        Post post = new Post();
-        post.createPost(title, author, boardName, content);
-        return post;
-    }
+//    @Transactional
+//    public Post createPost(Member author, BoardName boardName, String title, String content) {
+//        Post post = new Post();
+//        post.createPost(title, author, boardName, content);
+//        return post;
+//    }
 }

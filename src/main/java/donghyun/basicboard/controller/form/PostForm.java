@@ -6,6 +6,7 @@ import donghyun.basicboard.domain.UploadFileEntity;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -17,7 +18,7 @@ public class PostForm {
     private String content;
     private Member author;
     private BoardName boardName;
-    private List<UploadFileEntity> uploadFiles;
+    private List<MultipartFile> uploadFiles;
 
     public PostForm() {
     }

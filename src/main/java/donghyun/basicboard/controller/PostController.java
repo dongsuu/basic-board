@@ -1,27 +1,29 @@
 package donghyun.basicboard.controller;
 
+import donghyun.basicboard.controller.file.FileStore;
 import donghyun.basicboard.controller.form.CommentForm;
 import donghyun.basicboard.controller.form.PostEditForm;
 import donghyun.basicboard.controller.form.PostForm;
 import donghyun.basicboard.controller.session.SessionConst;
-import donghyun.basicboard.domain.BoardName;
-import donghyun.basicboard.domain.Comment;
-import donghyun.basicboard.domain.Member;
-import donghyun.basicboard.domain.Post;
+import donghyun.basicboard.domain.*;
 import donghyun.basicboard.service.CommentService;
 import donghyun.basicboard.service.MemberService;
 import donghyun.basicboard.service.PostService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.UrlResource;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+import java.io.File;
+import java.io.IOException;
+import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -32,6 +34,11 @@ public class PostController {
     private final PostService postService;
     private final MemberService memberService;
     private final CommentService commentService;
+
+    private final FileStore fileStore;
+
+    @Value("${file.dir}")
+    private String fileDir;
 
     @GetMapping("/boards")
     public String boards(Model model){
@@ -72,9 +79,11 @@ public class PostController {
     }
 
     @PostMapping("/boards/FREE/new")
-    public String newPostInFreeBoard(@ModelAttribute("postForm") PostForm postForm, HttpServletRequest request){
+    public String newPostInFreeBoard(@ModelAttribute("postForm") PostForm postForm, HttpServletRequest request) throws IOException {
         HttpSession session = request.getSession(false);
         Member loginMember = (Member) session.getAttribute(SessionConst.LOGIN_MEMBER);
+
+        List<UploadFileEntity> uploadFileEntities = fileStore.storeFiles(postForm.getUploadFiles());
 
         if(loginMember == null){
             log.error("로그인 하지 않은 사용자 접근입니다. 혹은 세션이 만료되었을 수 있습니다.");
@@ -85,10 +94,17 @@ public class PostController {
         postForm.setAuthor(member);
 
         Post post = new Post();
-        post.createPost(postForm.getTitle(), postForm.getAuthor(), BoardName.FREE, postForm.getContent());
+        post.createPost(postForm.getTitle(), postForm.getAuthor(), BoardName.FREE, postForm.getContent(), uploadFileEntities);
         postService.addPost(post);
         return "redirect:/boards/FREE";
     }
+
+    @ResponseBody
+    @GetMapping("/uploadFiles/{fileName}")
+    public Resource downloadFiles(@PathVariable String fileName) throws MalformedURLException {
+        return new UrlResource("file:" + fileStore.getFullFilePath(fileName));
+    }
+
 
 
     /**
@@ -103,9 +119,11 @@ public class PostController {
     }
 
     @PostMapping("/boards/SPORTS/new")
-    public String newPostInSportsBoard(@ModelAttribute("postForm") PostForm postForm, HttpServletRequest request){
+    public String newPostInSportsBoard(@ModelAttribute("postForm") PostForm postForm, HttpServletRequest request) throws IOException {
         HttpSession session = request.getSession(false);
         Member loginMember = (Member) session.getAttribute(SessionConst.LOGIN_MEMBER);
+
+        List<UploadFileEntity> uploadFileEntities = fileStore.storeFiles(postForm.getUploadFiles());
 
         if(loginMember == null){
             log.error("로그인 하지 않은 사용자 접근입니다. 혹은 세션이 만료되었을 수 있습니다.");
@@ -116,7 +134,7 @@ public class PostController {
         postForm.setAuthor(member);
 
         Post post = new Post();
-        post.createPost(postForm.getTitle(), postForm.getAuthor(), BoardName.SPORTS, postForm.getContent());
+        post.createPost(postForm.getTitle(), postForm.getAuthor(), BoardName.SPORTS, postForm.getContent(), uploadFileEntities);
         postService.addPost(post);
         return "redirect:/boards/SPORTS";
     }
@@ -133,9 +151,11 @@ public class PostController {
     }
 
     @PostMapping("/boards/STUDY/new")
-    public String newPostInStudyBoard(@ModelAttribute("postForm") PostForm postForm, HttpServletRequest request){
+    public String newPostInStudyBoard(@ModelAttribute("postForm") PostForm postForm, HttpServletRequest request) throws IOException {
         HttpSession session = request.getSession(false);
         Member loginMember = (Member) session.getAttribute(SessionConst.LOGIN_MEMBER);
+
+        List<UploadFileEntity> uploadFileEntities = fileStore.storeFiles(postForm.getUploadFiles());
 
         if(loginMember == null){
             log.error("로그인 하지 않은 사용자 접근입니다. 혹은 세션이 만료되었을 수 있습니다.");
@@ -146,7 +166,7 @@ public class PostController {
         postForm.setAuthor(member);
 
         Post post = new Post();
-        post.createPost(postForm.getTitle(), postForm.getAuthor(), BoardName.STUDY, postForm.getContent());
+        post.createPost(postForm.getTitle(), postForm.getAuthor(), BoardName.STUDY, postForm.getContent(), uploadFileEntities);
         postService.addPost(post);
         return "redirect:/boards/STUDY";
     }

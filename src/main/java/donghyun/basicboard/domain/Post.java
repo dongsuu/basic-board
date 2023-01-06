@@ -29,8 +29,7 @@ public class Post extends DateEntity{
     @NotEmpty
     private String content;
 
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "upload_file_id")
+    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<UploadFileEntity> uploadFiles = new ArrayList<>();
 
     @OneToMany(mappedBy = "post", cascade = CascadeType.REMOVE)
@@ -40,11 +39,15 @@ public class Post extends DateEntity{
     }
 
 
-    public void createPost(String title, Member author, BoardName boardName, String content){
+    public void createPost(String title, Member author, BoardName boardName, String content, List<UploadFileEntity> uploadFiles){
         this.title = title;
         this.author = author;
         this.boardName = boardName;
         this.content = content;
+        for (UploadFileEntity uploadFile : uploadFiles) {
+            this.uploadFiles.add(uploadFile);
+            uploadFile.setPost(this);
+        }
 
         author.getPosts().add(this); // 연관관계 편의 메서드
     }
