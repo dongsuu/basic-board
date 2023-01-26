@@ -51,8 +51,4 @@ public class CommentRepository {
         em.remove(comment);
     }
 
-//    public List<Comment> findAllReplies(Long commentId) {
-//
-//        return replies;
-//    }
 }

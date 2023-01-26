@@ -27,4 +27,8 @@ public class UploadFileEntity {
         this.uploadFile = new UploadFile(uploadFileName, storeFileName);
     }
 
+    public void createUploadFile(Post post, UploadFileEntity uploadFileEntity) {
+        this.uploadFile = uploadFileEntity.uploadFile;
+        this.post = post;
+    }
 }

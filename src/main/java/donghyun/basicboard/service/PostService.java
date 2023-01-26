@@ -3,6 +3,7 @@ package donghyun.basicboard.service;
 import donghyun.basicboard.domain.BoardName;
 import donghyun.basicboard.domain.Member;
 import donghyun.basicboard.domain.Post;
+import donghyun.basicboard.domain.UploadFileEntity;
 import donghyun.basicboard.repository.CommentRepository;
 import donghyun.basicboard.repository.PostRepository;
 import lombok.RequiredArgsConstructor;
@@ -26,9 +27,9 @@ public class PostService {
     }
 
     @Transactional
-    public void updatePost(Long postId, String title, BoardName boardName, String content){
+    public void updatePost(Long postId, String title, BoardName boardName, String content, List<UploadFileEntity> uploadFileEntities){
         Post updatePost = postRepository.findById(postId);
-        updatePost.updatePost(title, boardName, content);
+        updatePost.updatePost(title, boardName, content, uploadFileEntities);
     }
 
     public List<Post> findByBoardName(BoardName boardName){
@@ -52,6 +53,11 @@ public class PostService {
         postRepository.remove(removePost);
 
         return removePost;
+    }
+
+    public Post findByUploadFileId(Long uploadFileId){
+        Post findPost = postRepository.findByUploadFileId(uploadFileId);
+        return findPost;
     }
 
 //    @Transactional

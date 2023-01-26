@@ -2,7 +2,9 @@ package donghyun.basicboard.repository;
 
 import donghyun.basicboard.domain.BoardName;
 import donghyun.basicboard.domain.Post;
+import donghyun.basicboard.domain.UploadFileEntity;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
@@ -13,6 +15,7 @@ import java.util.List;
 public class PostRepository {
 
     private final EntityManager em;
+    private final UploadFileRepository uploadFileRepository;
 
     public Long save(Post post){
         em.persist(post);
@@ -37,6 +40,15 @@ public class PostRepository {
         List<Post> posts = em.createQuery(jpql, Post.class)
                 .getResultList();
         return posts;
+    }
+
+    public Post findByUploadFileId(Long uploadFileId){
+        UploadFileEntity findUploadFile = uploadFileRepository.findById(uploadFileId);
+        Long postId = findUploadFile.getPost().getId();
+        String jpql = "select p from Post p where p.id=:postId";
+        return em.createQuery(jpql, Post.class)
+                .setParameter("postId", postId)
+                .getSingleResult();
     }
 
     public void remove(Post post){
