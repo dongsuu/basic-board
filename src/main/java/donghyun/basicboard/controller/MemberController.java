@@ -40,14 +40,10 @@ public class MemberController {
             return "members/join";
         }
 
-        Member member = new Member();
-        member.createMember(memberForm.getName(), memberForm.getNickname(), memberForm.getAge(), memberForm.getId(), memberForm.getPassword());
+        Member member = Member.createMember(memberForm.getName(), memberForm.getNickname(), memberForm.getAge(), memberForm.getId(), memberForm.getPassword());
         memberService.join(member);
+
         log.info("===== 회원가입 완료 =====");
-        log.info("name={}", member.getName());
-        log.info("id={}", member.getId());
-        log.info("password={}", member.getUserPassword());
-        log.info("nickname={}", member.getNickname());
         return "redirect:/";
     }
 

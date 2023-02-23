@@ -1,6 +1,7 @@
 package donghyun.basicboard.service;
 
 import donghyun.basicboard.domain.Member;
+import donghyun.basicboard.dto.MemberJoinDto;
 import donghyun.basicboard.login.JwtTokenProvider;
 import donghyun.basicboard.login.TokenInfo;
 import donghyun.basicboard.repository.MemberRepository;
@@ -23,9 +24,9 @@ public class MemberService {
     private final JwtTokenProvider jwtTokenProvider;
 
     @Transactional
-    public Long join(Member member){
+    public Member join(Member member){
         memberRepository.save(member);
-        return member.getId();
+        return member;
     }
 
     public Member login(String id, String password){

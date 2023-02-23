@@ -1,7 +1,9 @@
 package donghyun.basicboard.domain;
 
+import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -14,6 +16,7 @@ import java.util.stream.Collectors;
 
 @Entity
 @Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Member extends DateEntity implements UserDetails {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -37,16 +40,15 @@ public class Member extends DateEntity implements UserDetails {
     @Builder.Default
     private List<String> roles = new ArrayList<>();
 
-    public Member() {
-    }
-
-    public void createMember(String name, String nickname, int age, String userId, String userPassword){
-        this.name = name;
-        this.nickname = nickname;
-        this.age = age;
-        this.userId = userId;
-        this.userPassword = userPassword;
-        this.roles.add("USER");
+    public static Member createMember(String name, String nickname, int age, String userId, String userPassword){
+        Member member = new Member();
+        member.name = name;
+        member.nickname = nickname;
+        member.age = age;
+        member.userId = userId;
+        member.userPassword = userPassword;
+        member.roles.add("USER");
+        return member;
     }
 
     public void changeNickname(String nickname){

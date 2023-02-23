@@ -1,4 +1,4 @@
-package donghyun.basicboard.controller;
+package donghyun.basicboard.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
