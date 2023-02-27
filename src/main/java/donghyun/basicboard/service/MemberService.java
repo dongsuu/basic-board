@@ -29,9 +29,9 @@ public class MemberService {
         return member;
     }
 
-    public Member login(String id, String password){
-        Optional<Member> findMember = memberRepository.findByLoginId(id);
-        return findMember.filter(m -> m.getUserPassword().equals(password)).orElse(null);
+    public Member login(String email, String password){
+        Optional<Member> findMember = memberRepository.findByEmail(email);
+        return findMember.filter(m -> m.getPassword().equals(password)).orElse(null);
     }
 
     public TokenInfo loginWithJwt(String userId, String password){

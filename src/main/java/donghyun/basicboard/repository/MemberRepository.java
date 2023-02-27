@@ -26,11 +26,12 @@ public class MemberRepository {
         return findMember;
     }
 
-    public Optional<Member> findByLoginId(String loginId){
-        String jpql = "select m from Member m where m.userId = :userId";
+    public Optional<Member> findByEmail(String email){
+        log.info("email={}", email);
+        String jpql = "select m from Member m where m.email = :email";
         try{
             Member findMember = em.createQuery(jpql, Member.class)
-                    .setParameter("userId", loginId)
+                    .setParameter("email", email)
                     .getSingleResult();
             return Optional.of(findMember);
         } catch(Exception e){

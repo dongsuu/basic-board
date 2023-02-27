@@ -25,13 +25,13 @@ import javax.validation.Valid;
 public class MemberApiController {
     private final MemberService memberService;
 
-    @PostMapping("members/join")
+    @PostMapping("/members/join")
     public ResponseEntity<MemberJoinDto> join(@Valid @RequestBody MemberJoinDto memberJoinDto){
         Member member = Member.createMember(
                 memberJoinDto.getName(),
                 memberJoinDto.getNickname(),
                 memberJoinDto.getAge(),
-                memberJoinDto.getUserId(),
+                memberJoinDto.getEmail(),
                 memberJoinDto.getPassword()
         );
         memberService.join(member);
@@ -40,9 +40,9 @@ public class MemberApiController {
 
     @PostMapping("/members/login")
     public TokenInfo login(@RequestBody MemberLoginRequestDto memberLoginRequestDto){
-        String memberId = memberLoginRequestDto.getMemberId();
-        String memberPassword = memberLoginRequestDto.getMemberPassword();
-        TokenInfo tokenInfo = memberService.loginWithJwt(memberId, memberPassword);
+        String email = memberLoginRequestDto.getEmail();
+        String password = memberLoginRequestDto.getPassword();
+        TokenInfo tokenInfo = memberService.loginWithJwt(email, password);
         return tokenInfo;
     }
 

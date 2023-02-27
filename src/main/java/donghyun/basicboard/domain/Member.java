@@ -27,8 +27,8 @@ public class Member extends DateEntity implements UserDetails {
     private String nickname;
     private int age;
 
-    private String userId;
-    private String userPassword;
+    private String email;
+    private String password;
 
     @OneToMany(mappedBy = "author")
     private List<Post> posts = new ArrayList<>();
@@ -37,16 +37,15 @@ public class Member extends DateEntity implements UserDetails {
     private List<Comment> comments = new ArrayList<>();
 
     @ElementCollection(fetch = FetchType.EAGER)
-    @Builder.Default
     private List<String> roles = new ArrayList<>();
 
-    public static Member createMember(String name, String nickname, int age, String userId, String userPassword){
+    public static Member createMember(String name, String nickname, int age, String email, String password){
         Member member = new Member();
         member.name = name;
         member.nickname = nickname;
         member.age = age;
-        member.userId = userId;
-        member.userPassword = userPassword;
+        member.email = email;
+        member.password = password;
         member.roles.add("USER");
         return member;
     }
@@ -64,12 +63,12 @@ public class Member extends DateEntity implements UserDetails {
 
     @Override
     public String getPassword() {
-        return userPassword;
+        return password;
     }
 
     @Override
     public String getUsername() {
-        return userId;
+        return email;
     }
 
     @Override
