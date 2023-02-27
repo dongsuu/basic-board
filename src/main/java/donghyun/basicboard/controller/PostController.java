@@ -10,6 +10,7 @@ import donghyun.basicboard.repository.UploadFileRepository;
 import donghyun.basicboard.service.CommentService;
 import donghyun.basicboard.service.MemberService;
 import donghyun.basicboard.service.PostService;
+import donghyun.basicboard.service.S3Upload;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -36,6 +37,7 @@ public class PostController {
     private final MemberService memberService;
     private final CommentService commentService;
     private final UploadFileRepository uploadFileRepository;
+    private final S3Upload s3Upload;
 
     private final FileStore fileStore;
 
@@ -83,8 +85,7 @@ public class PostController {
     @PostMapping("/boards/FREE/new")
     public String newPostInFreeBoard(@ModelAttribute("postForm") PostForm postForm, HttpServletRequest request) throws IOException {
         Member sessionMember = getSessionMember(request);
-
-        List<UploadFileEntity> uploadFileEntities = fileStore.storeFiles(postForm.getUploadFiles());
+        List<MultipartFile> multipartFiles = postForm.getUploadFiles();
 
         if(sessionMember == null){
             log.error("로그인 하지 않은 사용자 접근입니다. 혹은 세션이 만료되었을 수 있습니다.");
@@ -94,9 +95,15 @@ public class PostController {
 
         postForm.setAuthor(member);
 
-        Post post = new Post();
-        post.createPost(postForm.getTitle(), postForm.getAuthor(), BoardName.FREE, postForm.getContent(), uploadFileEntities);
+        Post post = Post.createPost(postForm.getTitle(), postForm.getAuthor(), BoardName.FREE, postForm.getContent());
         postService.addPost(post);
+
+        for (MultipartFile multipartFile : multipartFiles) {
+            String s3FilePath = s3Upload.upload(multipartFile, post.getId());
+            UploadFileEntity uploadFileEntity = UploadFileEntity.createUploadFileEntity(s3FilePath, multipartFile.getOriginalFilename());
+            uploadFileEntity.updatePost(post);
+            uploadFileRepository.save(uploadFileEntity);
+        }
         return "redirect:/boards/FREE";
     }
 
@@ -128,8 +135,7 @@ public class PostController {
     @PostMapping("/boards/SPORTS/new")
     public String newPostInSportsBoard(@ModelAttribute("postForm") PostForm postForm, HttpServletRequest request) throws IOException {
         Member sessionMember = getSessionMember(request);
-
-        List<UploadFileEntity> uploadFileEntities = fileStore.storeFiles(postForm.getUploadFiles());
+        List<MultipartFile> multipartFiles = postForm.getUploadFiles();
 
         if(sessionMember == null){
             log.error("로그인 하지 않은 사용자 접근입니다. 혹은 세션이 만료되었을 수 있습니다.");
@@ -139,9 +145,15 @@ public class PostController {
 
         postForm.setAuthor(member);
 
-        Post post = new Post();
-        post.createPost(postForm.getTitle(), postForm.getAuthor(), BoardName.SPORTS, postForm.getContent(), uploadFileEntities);
+        Post post = Post.createPost(postForm.getTitle(), postForm.getAuthor(), BoardName.SPORTS, postForm.getContent());
         postService.addPost(post);
+
+        for (MultipartFile multipartFile : multipartFiles) {
+            String s3FilePath = s3Upload.upload(multipartFile, post.getId());
+            UploadFileEntity uploadFileEntity = UploadFileEntity.createUploadFileEntity(s3FilePath, multipartFile.getOriginalFilename());
+            uploadFileEntity.updatePost(post);
+            uploadFileRepository.save(uploadFileEntity);
+        }
         return "redirect:/boards/SPORTS";
     }
 
@@ -159,8 +171,7 @@ public class PostController {
     @PostMapping("/boards/STUDY/new")
     public String newPostInStudyBoard(@ModelAttribute("postForm") PostForm postForm, HttpServletRequest request) throws IOException {
         Member sessionMember = getSessionMember(request);
-
-        List<UploadFileEntity> uploadFileEntities = fileStore.storeFiles(postForm.getUploadFiles());
+        List<MultipartFile> multipartFiles = postForm.getUploadFiles();
 
         if(sessionMember == null){
             log.error("로그인 하지 않은 사용자 접근입니다. 혹은 세션이 만료되었을 수 있습니다.");
@@ -170,9 +181,15 @@ public class PostController {
 
         postForm.setAuthor(member);
 
-        Post post = new Post();
-        post.createPost(postForm.getTitle(), postForm.getAuthor(), BoardName.STUDY, postForm.getContent(), uploadFileEntities);
+        Post post = Post.createPost(postForm.getTitle(), postForm.getAuthor(), BoardName.STUDY, postForm.getContent());
         postService.addPost(post);
+
+        for (MultipartFile multipartFile : multipartFiles) {
+            String s3FilePath = s3Upload.upload(multipartFile, post.getId());
+            UploadFileEntity uploadFileEntity = UploadFileEntity.createUploadFileEntity(s3FilePath, multipartFile.getOriginalFilename());
+            uploadFileEntity.updatePost(post);
+            uploadFileRepository.save(uploadFileEntity);
+        }
         return "redirect:/boards/STUDY";
     }
 
@@ -252,7 +269,6 @@ public class PostController {
         postEditForm.setTitle(editPost.getTitle());
         postEditForm.setBoardName(editPost.getBoardName());
         postEditForm.setContent(editPost.getContent());
-        postEditForm.setUploadFiles(editPost.getUploadFiles());
 
 
         model.addAttribute("postEditForm", postEditForm);
@@ -260,8 +276,9 @@ public class PostController {
     }
 
     @PostMapping("/boards/edit/{postId}")
-    public String postEdit(@PathVariable("postId") Long postId, @ModelAttribute("postEditForm") PostEditForm postEditForm){
+    public String postEdit(@PathVariable("postId") Long postId, @ModelAttribute("postEditForm") PostEditForm postEditForm) throws IOException {
         Post editPost = postService.findById(postId);
+        postEditForm.getUploadFiles();
         postService.updatePost(postId, postEditForm.getTitle(), postEditForm.getBoardName(), postEditForm.getContent(), postEditForm.getUploadFiles());
         return "redirect:/boards/" + editPost.getBoardName();
     }
@@ -277,23 +294,23 @@ public class PostController {
     }
 
     /**
-     * 게시글 수정 - 첨부파일 제거
+     * 게시글 수정 - 첨부파일 제거 -> 게시글 수정할 때 함께 수행
      */
-    @GetMapping("/boards/uploadFile/edit/{uploadFileId}")
-    public String removeUploadFile(@PathVariable("uploadFileId") Long uploadFileId){
-        Post findPost = postService.findByUploadFileId(uploadFileId);
-        List<UploadFileEntity> uploadFiles = findPost.getUploadFiles();
-        System.out.println("uploadFiles = " + uploadFiles.size());
-        for (UploadFileEntity uploadFile : uploadFiles) {
-            if(uploadFile.getId().equals(uploadFileId)){
-                System.out.println("uploadFile = " + uploadFile.getId());
-                findPost.removeUploadFile(uploadFile);
-                postService.updatePost(findPost.getId(), findPost.getTitle(), findPost.getBoardName(), findPost.getContent(), findPost.getUploadFiles());
-                uploadFileRepository.remove(uploadFile);
-            }
-        }
-
-        return "redirect:/boards/edit/" + findPost.getId();
-    }
+//    @GetMapping("/boards/uploadFile/edit/{uploadFileId}")
+//    public String removeUploadFile(@PathVariable("uploadFileId") Long uploadFileId){
+//        Post findPost = postService.findByUploadFileId(uploadFileId);
+//        List<UploadFileEntity> uploadFiles = findPost.getUploadFiles();
+//        System.out.println("uploadFiles = " + uploadFiles.size());
+//        for (UploadFileEntity uploadFile : uploadFiles) {
+//            if(uploadFile.getId().equals(uploadFileId)){
+//                System.out.println("uploadFile = " + uploadFile.getId());
+//                findPost.removeUploadFile(uploadFile);
+//                postService.updatePost(findPost.getId(), findPost.getTitle(), findPost.getBoardName(), findPost.getContent(), findPost.getUploadFiles());
+//                uploadFileRepository.remove(uploadFile);
+//            }
+//        }
+//
+//        return "redirect:/boards/edit/" + findPost.getId();
+//    }
 
 }

@@ -42,9 +42,7 @@ public class FileStore {
         String storeFileName = createStoreFileName(originalFileName);
 
         multipartFile.transferTo(new File(getFullFilePath(storeFileName)));
-
-        return new UploadFileEntity(originalFileName, storeFileName);
-
+        return UploadFileEntity.createUploadFileEntity(originalFileName, storeFileName);
     }
 
     private String createStoreFileName(String originalFileName){
