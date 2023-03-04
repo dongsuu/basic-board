@@ -23,6 +23,7 @@ public class MemberRepository {
 
     public Member findById(Long memberId){
         Member findMember = em.find(Member.class, memberId);
+        log.info("findMember={}", findMember);
         return findMember;
     }
 

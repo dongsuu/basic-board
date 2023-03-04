@@ -4,6 +4,7 @@ import donghyun.basicboard.domain.BoardName;
 import donghyun.basicboard.domain.Post;
 import donghyun.basicboard.domain.UploadFileEntity;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -12,6 +13,7 @@ import java.util.List;
 
 @Repository
 @RequiredArgsConstructor
+@Slf4j
 public class PostRepository {
 
     private final EntityManager em;
@@ -28,6 +30,7 @@ public class PostRepository {
     }
 
     public List<Post> findByBoardName(BoardName boardName){
+        log.info("boardName={}", boardName);
         String jpql = "select p from Post p where p.boardName = :boardName";
         List<Post> posts = em.createQuery(jpql, Post.class)
                 .setParameter("boardName", boardName)

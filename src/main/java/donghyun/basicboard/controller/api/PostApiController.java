@@ -1,11 +1,14 @@
 package donghyun.basicboard.controller.api;
 
 import donghyun.basicboard.domain.*;
+import donghyun.basicboard.dto.CreatePostDto;
 import donghyun.basicboard.dto.PostDto;
 import donghyun.basicboard.dto.UpdatePostDto;
 import donghyun.basicboard.service.*;
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Controller;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -14,21 +17,29 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/posts")
+@RequestMapping("/apis/posts")
+@Slf4j
 public class PostApiController {
     private final PostService postService;
     private final UploadFileService uploadFileService;
     private final S3Upload s3Upload;
 
-    @PostMapping("/new")
-    public void createPost(@RequestPart("data") PostDto postDto, @RequestPart("files")MultipartFile[] multipartFiles) throws IOException {
+    @GetMapping("/{boardName}")
+    public ResponseEntity<List<PostDto>> findPostsByBoardName(@PathVariable BoardName boardName){
+        log.info("GET POSTS REQUEST");
+        List<PostDto> result = postService.findByBoardName(boardName);
+        return new ResponseEntity<>(result, HttpStatus.OK);
+    }
+
+    @PostMapping("/upload/new")
+    public ResponseEntity<String> createPostWithImages(@RequestPart("data") CreatePostDto createPostDto, @RequestPart("files")MultipartFile[] multipartFiles) throws IOException {
         Member currentMember = AuthenticationProvider.getCurrentMember();
 
         Post post = Post.createPost(
-                postDto.getTitle(),
+                createPostDto.getTitle(),
                 currentMember,
-                BoardName.valueOf(postDto.getBoardName()),
-                postDto.getContent()
+                createPostDto.getBoardName(),
+                createPostDto.getContent()
         );
         postService.addPost(post);
 
@@ -40,23 +51,59 @@ public class PostApiController {
                 uploadFileService.save(uploadFileEntity);
             }
         }
+        return new ResponseEntity<>("OK", HttpStatus.OK);
+    }
 
+    @PostMapping("/new")
+    public ResponseEntity<String> createPost(@RequestPart("data") CreatePostDto createPostDto) throws IOException {
+        Member currentMember = AuthenticationProvider.getCurrentMember();
+
+        Post post = Post.createPost(
+                createPostDto.getTitle(),
+                currentMember,
+                createPostDto.getBoardName(),
+                createPostDto.getContent()
+        );
+        postService.addPost(post);
+
+        return new ResponseEntity<>("OK", HttpStatus.OK);
+    }
+
+    @GetMapping("/details/{postId}")
+    public UpdatePostDto postDetails(@PathVariable Long postId){
+        Post findPost = postService.findById(postId);
+        List<String> uploadFilePaths = s3Upload.getUploadFiles(findPost);
+        log.info("uploadFilePathsSize = {}", uploadFilePaths.size());
+        return new UpdatePostDto(
+                findPost.getTitle(),
+                findPost.getContent(),
+                findPost.getBoardName().name(),
+                uploadFilePaths,
+                findPost.getAuthor().getName(),
+                findPost.getLastModifiedDate());
     }
 
     @GetMapping("/update/{postId}")
     public UpdatePostDto updatePostGet(@PathVariable Long postId){
         Post findPost = postService.findById(postId);
         List<String> uploadFilePaths = s3Upload.getUploadFiles(findPost);
-        return new UpdatePostDto(findPost.getTitle(), findPost.getContent(), findPost.getBoardName().name(), uploadFilePaths);
+        return new UpdatePostDto(
+                findPost.getTitle(),
+                findPost.getContent(),
+                findPost.getBoardName().name(),
+                uploadFilePaths,
+                findPost.getAuthor().getName(),
+                findPost.getLastModifiedDate()
+        );
     }
 
     @PostMapping("/update/{postId}")
-    public void updatePost(@PathVariable Long postId, @RequestPart PostDto postDto, @RequestPart MultipartFile[] multipartFiles) throws IOException {
+    public void updatePost(@PathVariable Long postId, @RequestPart CreatePostDto createPostDto, @RequestPart MultipartFile[] multipartFiles) throws IOException {
         postService.updatePost(
                 postId,
-                postDto.getTitle(),
-                BoardName.valueOf(postDto.getBoardName()),
-                postDto.getContent(),
+                createPostDto.getTitle(),
+                createPostDto.getBoardName(),
+                createPostDto.getContent(),
                 multipartFiles
         );
     }
@@ -65,4 +112,5 @@ public class PostApiController {
     public void deletePost(@PathVariable Long postId){
         postService.removePost(postId);
     }
+
 }

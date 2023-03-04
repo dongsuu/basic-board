@@ -1,5 +1,7 @@
 package donghyun.basicboard.login;
 
+import donghyun.basicboard.repository.MemberRepository;
+import donghyun.basicboard.service.UserDetailsImpl;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
@@ -23,10 +25,12 @@ import java.util.stream.Collectors;
 @Component
 public class JwtTokenProvider {
     private final Key key;
+    private final MemberRepository memberRepository;
 
-    public JwtTokenProvider(@Value("${jwt.secret}") String secretKey){
+    public JwtTokenProvider(@Value("${jwt.secret}") String secretKey, MemberRepository memberRepository){
         byte[] decode = Decoders.BASE64.decode(secretKey);
         this.key = Keys.hmacShaKeyFor(decode);
+        this.memberRepository = memberRepository;
     }
 
     // 유저 정보를 통해 accessToken, refreshToken 생성
@@ -75,7 +79,13 @@ public class JwtTokenProvider {
                         .collect(Collectors.toList());
 
         // UserDetails 객체를 만들어서 Authentication 리턴
-        UserDetails principal = new User(claims.getSubject(), "", authorities);
+        UserDetailsImpl principal = memberRepository.findByEmail(claims.getSubject())
+                .map(UserDetailsImpl::new)
+                .orElseThrow(() -> new RuntimeException("존재하지 않는 회원입니다."));
+        log.info("principal={}", principal);
+        log.info("principal={}", principal.getMember());
+        log.info("principal={}", principal.getUsername());
+        log.info("principal={}", principal.getPassword());
         return new UsernamePasswordAuthenticationToken(principal, "", authorities);
     }
 

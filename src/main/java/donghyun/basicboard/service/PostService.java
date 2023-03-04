@@ -1,9 +1,10 @@
 package donghyun.basicboard.service;
 
 import donghyun.basicboard.domain.BoardName;
-import donghyun.basicboard.domain.Member;
 import donghyun.basicboard.domain.Post;
 import donghyun.basicboard.domain.UploadFileEntity;
+import donghyun.basicboard.dto.CreatePostDto;
+import donghyun.basicboard.dto.PostDto;
 import donghyun.basicboard.repository.CommentRepository;
 import donghyun.basicboard.repository.PostRepository;
 import donghyun.basicboard.repository.UploadFileRepository;
@@ -15,6 +16,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -51,8 +53,13 @@ public class PostService {
         updatePost.updatePost(title, boardName, content, uploadFileEntities);
     }
 
-    public List<Post> findByBoardName(BoardName boardName){
-        List<Post> result = postRepository.findByBoardName(boardName);
+    public List<PostDto> findByBoardName(BoardName boardName){
+        List<Post> posts = postRepository.findByBoardName(boardName);
+
+        List<PostDto> result = posts.stream()
+                .map(p -> new PostDto(p.getId(), p.getTitle(), p.getContent(), p.getBoardName()))
+                .collect(Collectors.toList());
+
         return result;
     }
 

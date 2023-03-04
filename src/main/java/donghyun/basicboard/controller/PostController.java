@@ -6,6 +6,8 @@ import donghyun.basicboard.controller.form.PostEditForm;
 import donghyun.basicboard.controller.form.PostForm;
 import donghyun.basicboard.controller.session.SessionConst;
 import donghyun.basicboard.domain.*;
+import donghyun.basicboard.dto.CreatePostDto;
+import donghyun.basicboard.dto.PostDto;
 import donghyun.basicboard.repository.UploadFileRepository;
 import donghyun.basicboard.service.CommentService;
 import donghyun.basicboard.service.MemberService;
@@ -23,7 +25,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
-import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.util.ArrayList;
@@ -57,7 +58,7 @@ public class PostController {
 
     @GetMapping("/boards/{boardName}")
     public String BoardByName(@PathVariable("boardName") BoardName boardName, Model model){
-        List<Post> result = postService.findByBoardName(boardName);
+        List<PostDto> result = postService.findByBoardName(boardName);
         model.addAttribute("posts", result);
         if(boardName.name() == "FREE"){
             return "boards/free";
