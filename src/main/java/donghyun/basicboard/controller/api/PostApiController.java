@@ -97,15 +97,26 @@ public class PostApiController {
         );
     }
 
-    @PostMapping("/update/{postId}")
-    public void updatePost(@PathVariable Long postId, @RequestPart CreatePostDto createPostDto, @RequestPart MultipartFile[] multipartFiles) throws IOException {
-        postService.updatePost(
+    @PostMapping("/update/upload/{postId}")
+    public void updatePostWithImages(@PathVariable Long postId, @RequestPart CreatePostDto createPostDto, @RequestPart MultipartFile[] multipartFiles) throws IOException {
+        postService.updatePostWithImages(
                 postId,
                 createPostDto.getTitle(),
                 createPostDto.getBoardName(),
                 createPostDto.getContent(),
                 multipartFiles
         );
+    }
+
+    @PostMapping("/update/{postId}")
+    public ResponseEntity<String> updatePost(@PathVariable Long postId, @RequestBody CreatePostDto createPostDto) {
+        postService.updatePost(
+                postId,
+                createPostDto.getTitle(),
+                createPostDto.getBoardName(),
+                createPostDto.getContent()
+        );
+        return new ResponseEntity<>("OK", HttpStatus.OK);
     }
 
     @PostMapping("/delete/{postId}")

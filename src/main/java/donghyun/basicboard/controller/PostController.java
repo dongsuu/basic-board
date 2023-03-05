@@ -280,7 +280,7 @@ public class PostController {
     public String postEdit(@PathVariable("postId") Long postId, @ModelAttribute("postEditForm") PostEditForm postEditForm) throws IOException {
         Post editPost = postService.findById(postId);
         postEditForm.getUploadFiles();
-        postService.updatePost(postId, postEditForm.getTitle(), postEditForm.getBoardName(), postEditForm.getContent(), postEditForm.getUploadFiles());
+        postService.updatePostWithImages(postId, postEditForm.getTitle(), postEditForm.getBoardName(), postEditForm.getContent(), postEditForm.getUploadFiles());
         return "redirect:/boards/" + editPost.getBoardName();
     }
 

@@ -35,7 +35,7 @@ public class PostService {
     }
 
     @Transactional
-    public void updatePost(Long postId, String title, BoardName boardName, String content, MultipartFile[] multipartFiles) throws IOException {
+    public void updatePostWithImages(Long postId, String title, BoardName boardName, String content, MultipartFile[] multipartFiles) throws IOException {
         Post updatePost = postRepository.findById(postId);
 
         uploadFileRepository.removeAll(updatePost.getUploadFiles());
@@ -51,6 +51,13 @@ public class PostService {
         }
 
         updatePost.updatePost(title, boardName, content, uploadFileEntities);
+    }
+
+    @Transactional
+    public void updatePost(Long postId, String title, BoardName boardName, String content){
+        Post updatePost = postRepository.findById(postId);
+        uploadFileRepository.removeAll(updatePost.getUploadFiles());
+        updatePost.updatePost(title, boardName, content, List.of());
     }
 
     public List<PostDto> findByBoardName(BoardName boardName){
