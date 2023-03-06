@@ -120,8 +120,9 @@ public class PostApiController {
     }
 
     @PostMapping("/delete/{postId}")
-    public void deletePost(@PathVariable Long postId){
+    public ResponseEntity<String> deletePost(@PathVariable Long postId){
         postService.removePost(postId);
+        return new ResponseEntity<>("OK", HttpStatus.OK);
     }
 
 }
