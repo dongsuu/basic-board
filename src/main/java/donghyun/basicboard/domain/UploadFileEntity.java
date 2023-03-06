@@ -23,8 +23,15 @@ public class UploadFileEntity {
     public UploadFileEntity() {
     }
 
-    public UploadFileEntity(String uploadFileName, String storeFileName){
-        this.uploadFile = new UploadFile(uploadFileName, storeFileName);
+    public static UploadFileEntity createUploadFileEntity(String uploadFileName, String storeFileName){
+        UploadFileEntity uploadFileEntity = new UploadFileEntity();
+        uploadFileEntity.uploadFile = new UploadFile(uploadFileName, storeFileName);
+        return uploadFileEntity;
+    }
+
+    public void updatePost(Post post){
+        this.post = post;
+        post.getUploadFiles().add(this);
     }
 
     public void createUploadFile(Post post, UploadFileEntity uploadFileEntity) {

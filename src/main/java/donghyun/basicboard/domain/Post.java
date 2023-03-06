@@ -40,17 +40,19 @@ public class Post extends DateEntity{
     }
 
 
-    public void createPost(String title, Member author, BoardName boardName, String content, List<UploadFileEntity> uploadFiles){
-        this.title = title;
-        this.author = author;
-        this.boardName = boardName;
-        this.content = content;
-        this.uploadFiles = uploadFiles;
-
-        for (UploadFileEntity uploadFile : uploadFiles) {
-            uploadFile.setPost(this); // 연관관계 편의 메서드
-        }
-        author.getPosts().add(this); // 연관관계 편의 메서드
+    public static Post createPost(String title, Member author, BoardName boardName, String content){
+        Post post = new Post();
+        post.title = title;
+        post.author = author;
+        post.boardName = boardName;
+        post.content = content;
+//        post.uploadFiles = uploadFiles;
+//
+//        for (UploadFileEntity uploadFile : uploadFiles) {
+//            uploadFile.setPost(post); // 연관관계 편의 메서드
+//        }
+//        author.getPosts().add(post); // 연관관계 편의 메서드
+        return post;
     }
 
     public void updatePost(String title, BoardName boardName, String content, List<UploadFileEntity> uploadFileEntities){

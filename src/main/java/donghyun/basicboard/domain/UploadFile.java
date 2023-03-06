@@ -8,15 +8,15 @@ import java.util.Objects;
 @Embeddable
 @Getter
 public class UploadFile {
-    private String uploadFileName;
-    private String storeFileName;
+    private String s3FilePath; // s3 file path
+    private String originalFileName; // 원본 파일 이름
 
     public UploadFile() {
     }
 
     public UploadFile(String uploadFileName, String storeFileName) {
-        this.uploadFileName = uploadFileName;
-        this.storeFileName = storeFileName;
+        this.s3FilePath = uploadFileName;
+        this.originalFileName = storeFileName;
     }
 
     @Override
@@ -24,11 +24,11 @@ public class UploadFile {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         UploadFile that = (UploadFile) o;
-        return Objects.equals(uploadFileName, that.uploadFileName) && Objects.equals(storeFileName, that.storeFileName);
+        return Objects.equals(s3FilePath, that.s3FilePath) && Objects.equals(originalFileName, that.originalFileName);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(uploadFileName, storeFileName);
+        return Objects.hash(s3FilePath, originalFileName);
     }
 }

@@ -53,22 +53,22 @@ public class MemberController {
         return "members/login";
     }
 
-//    @PostMapping("/members/login")
-//    public String login(@ModelAttribute LoginForm loginForm, BindingResult bindingResult, HttpServletRequest request){
-//        Member loginMember = memberService.login(loginForm.getId(), loginForm.getPassword());
-//        log.info("loginMember={}", loginMember);
-//
-//        // 로그인 실패
-//        if(loginMember == null){
-//            log.info("로그인 실패");
-//        }
-//
-//        // 로그인 성공
-//        HttpSession session = request.getSession();
-//        session.setAttribute("loginMember", loginMember);
-//
-//        return "redirect:/";
-//    }
+    @PostMapping("/members/login")
+    public String login(@ModelAttribute LoginForm loginForm, BindingResult bindingResult, HttpServletRequest request){
+        Member loginMember = memberService.login(loginForm.getId(), loginForm.getPassword());
+        log.info("loginMember={}", loginMember);
+
+        // 로그인 실패
+        if(loginMember == null){
+            log.info("로그인 실패");
+        }
+
+        // 로그인 성공
+        HttpSession session = request.getSession();
+        session.setAttribute("loginMember", loginMember);
+
+        return "redirect:/";
+    }
 
     @PostMapping("/logout")
     public String logout(HttpServletRequest request){

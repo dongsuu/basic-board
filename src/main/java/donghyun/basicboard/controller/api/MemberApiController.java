@@ -1,31 +1,33 @@
 package donghyun.basicboard.controller.api;
 
+import donghyun.basicboard.domain.BoardName;
+import donghyun.basicboard.domain.Post;
 import donghyun.basicboard.dto.MemberJoinDto;
 import donghyun.basicboard.dto.MemberLoginRequestDto;
 import donghyun.basicboard.domain.Member;
 import donghyun.basicboard.login.TokenInfo;
 import donghyun.basicboard.service.MemberService;
+import donghyun.basicboard.service.PostService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.PostConstruct;
+import javax.persistence.EntityManager;
 import javax.validation.Valid;
 
 @Slf4j
 @RestController
-@Controller
 @RequiredArgsConstructor
+@RequestMapping("/apis/members")
 public class MemberApiController {
     private final MemberService memberService;
+    private final PostService postService;
 
-    @PostMapping("/members/join")
+    @PostMapping("/join")
     public ResponseEntity<MemberJoinDto> join(@Valid @RequestBody MemberJoinDto memberJoinDto){
         Member member = Member.createMember(
                 memberJoinDto.getName(),
@@ -38,7 +40,7 @@ public class MemberApiController {
         return new ResponseEntity<>(memberJoinDto, HttpStatus.OK);
     }
 
-    @PostMapping("/members/login")
+    @PostMapping("/login")
     public TokenInfo login(@RequestBody MemberLoginRequestDto memberLoginRequestDto){
         String email = memberLoginRequestDto.getEmail();
         String password = memberLoginRequestDto.getPassword();
@@ -46,12 +48,12 @@ public class MemberApiController {
         return tokenInfo;
     }
 
-    @GetMapping("/members/test")
+    @GetMapping("/test")
     public String test(){
         return "ok";
     }
 
-    @GetMapping("/members/other")
+    @GetMapping("/other")
     public String other(){
         return "ok";
     }
