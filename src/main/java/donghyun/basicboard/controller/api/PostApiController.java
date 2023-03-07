@@ -1,9 +1,7 @@
 package donghyun.basicboard.controller.api;
 
 import donghyun.basicboard.domain.*;
-import donghyun.basicboard.dto.CreatePostDto;
-import donghyun.basicboard.dto.PostDto;
-import donghyun.basicboard.dto.UpdatePostDto;
+import donghyun.basicboard.dto.*;
 import donghyun.basicboard.service.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -14,6 +12,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequiredArgsConstructor
@@ -26,7 +25,6 @@ public class PostApiController {
 
     @GetMapping("/{boardName}")
     public ResponseEntity<List<PostDto>> findPostsByBoardName(@PathVariable BoardName boardName){
-        log.info("GET POSTS REQUEST");
         List<PostDto> result = postService.findByBoardName(boardName);
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
@@ -70,17 +68,34 @@ public class PostApiController {
     }
 
     @GetMapping("/details/{postId}")
-    public UpdatePostDto postDetails(@PathVariable Long postId){
+    public ResponseEntity<DetailsPostDto> postDetails(@PathVariable Long postId){
         Post findPost = postService.findById(postId);
         List<String> uploadFilePaths = s3Upload.getUploadFiles(findPost);
         log.info("uploadFilePathsSize = {}", uploadFilePaths.size());
-        return new UpdatePostDto(
+        DetailsPostDto detailsPost = new DetailsPostDto(
+                postId,
                 findPost.getTitle(),
                 findPost.getContent(),
-                findPost.getBoardName().name(),
-                uploadFilePaths,
                 findPost.getAuthor().getName(),
-                findPost.getLastModifiedDate());
+                findPost.getAuthor().getNickname(),
+                findPost.getBoardName().getBoardName(),
+                findPost.getUploadFiles().stream().map(uf -> uf.getUploadFile().getS3FilePath()).collect(Collectors.toList()),
+                findPost.getLastModifiedDate(),
+                findPost.getComments().stream()
+                        .filter(c -> c.getParentComment() == null)
+                        .map(c -> new ParentCommentDto(
+                                c.getId(),
+                                c.getAuthor().getNickname(),
+                                c.getContent(),
+                                c.getCreateDate(),
+                                c.getReplies().stream()
+                                        .map(r -> new RepliesDto(r.getId(), r.getAuthor().getNickname(), r.getContent(), r.getCreateDate()))
+                                        .collect(Collectors.toList())
+                        ))
+                        .collect(Collectors.toList())
+        );
+
+        return new ResponseEntity<>(detailsPost, HttpStatus.OK);
     }
 
     @GetMapping("/update/{postId}")

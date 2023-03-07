@@ -34,12 +34,13 @@ public class Comment extends DateEntity{
     public Comment() {
     }
 
-    public void createComment(Member author, String content, Post post){
-        this.author = author;
-        this.content = content;
-        this.post = post;
-
-        author.getComments().add(this);
+    public static Comment createComment(Member author, String content, Post post){
+        Comment comment = new Comment();
+        comment.author = author;
+        comment.content = content;
+        comment.post = post;
+        author.getComments().add(comment); // 연관관계 편의 메서드
+        return comment;
     }
 
     public void addReply(Comment child) {
