@@ -1,26 +1,32 @@
 package donghyun.basicboard.service;
 
 import donghyun.basicboard.domain.Member;
+import donghyun.basicboard.domain.RefreshToken;
 import donghyun.basicboard.dto.MemberJoinDto;
 import donghyun.basicboard.login.JwtTokenProvider;
 import donghyun.basicboard.login.TokenInfo;
 import donghyun.basicboard.repository.MemberRepository;
+import donghyun.basicboard.repository.RefreshTokenRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 
 import java.util.Optional;
 
+@Slf4j
 @Service
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class MemberService {
 
     private final MemberRepository memberRepository;
+    private final RefreshTokenRepository refreshTokenRepository;
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
     private final JwtTokenProvider jwtTokenProvider;
     private final PasswordEncoder passwordEncoder;
@@ -87,6 +93,20 @@ public class MemberService {
     public void remove(Long memberId){
         Member removeMember = memberRepository.findById(memberId);
         memberRepository.remove(removeMember);
+    }
+
+    @Transactional
+    public void logout(String accessTokenWithType) {
+        String email = AuthenticationProvider.getCurrentMember().getEmail();
+        RefreshToken refreshToken = refreshTokenRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("존재하지 않는 RefreshToken입니다."));
+
+        String accessToken = accessTokenWithType.substring(7);
+
+        Authentication authentication = jwtTokenProvider.getAuthentication(accessToken);
+
+        refreshTokenRepository.setBlackList(email, accessToken, "accessToken");
+        refreshTokenRepository.remove(refreshToken);
     }
 
 }

@@ -1,7 +1,5 @@
 package donghyun.basicboard.controller.api;
 
-import donghyun.basicboard.domain.BoardName;
-import donghyun.basicboard.domain.Post;
 import donghyun.basicboard.dto.MemberJoinDto;
 import donghyun.basicboard.dto.MemberLoginRequestDto;
 import donghyun.basicboard.domain.Member;
@@ -12,11 +10,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.PostConstruct;
-import javax.persistence.EntityManager;
 import javax.validation.Valid;
 
 @Slf4j
@@ -46,6 +42,12 @@ public class MemberApiController {
         String password = memberLoginRequestDto.getPassword();
         TokenInfo tokenInfo = memberService.loginWithJwt(email, password);
         return tokenInfo;
+    }
+
+    @PostMapping("/logout")
+    public ResponseEntity<String> logout(@RequestHeader("Authorization") String accessTokenWithType){
+        memberService.logout(accessTokenWithType);
+        return new ResponseEntity<>("OK", HttpStatus.OK);
     }
 
     @GetMapping("/test")

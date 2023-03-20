@@ -1,11 +1,14 @@
 package donghyun.basicboard.login;
 
+import donghyun.basicboard.domain.RefreshToken;
 import donghyun.basicboard.repository.MemberRepository;
+import donghyun.basicboard.repository.RefreshTokenRepository;
 import donghyun.basicboard.service.UserDetailsImpl;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -26,11 +29,13 @@ import java.util.stream.Collectors;
 public class JwtTokenProvider {
     private final Key key;
     private final MemberRepository memberRepository;
+    private final RefreshTokenRepository refreshTokenRepository;
 
-    public JwtTokenProvider(@Value("${jwt.secret}") String secretKey, MemberRepository memberRepository){
+    public JwtTokenProvider(@Value("${jwt.secret}") String secretKey, MemberRepository memberRepository, RefreshTokenRepository refreshTokenRepository){
         byte[] decode = Decoders.BASE64.decode(secretKey);
         this.key = Keys.hmacShaKeyFor(decode);
         this.memberRepository = memberRepository;
+        this.refreshTokenRepository = refreshTokenRepository;
     }
 
     // 유저 정보를 통해 accessToken, refreshToken 생성
@@ -51,15 +56,18 @@ public class JwtTokenProvider {
                 .compact();
 
         // Refresh Token 생성
-        String refreshToken = Jwts.builder()
+        String refreshTokenString = Jwts.builder()
                 .setExpiration(new Date(now + 86400000))
                 .signWith(key, SignatureAlgorithm.HS256)
                 .compact();
 
+        RefreshToken refreshToken = new RefreshToken(authentication.getName(), refreshTokenString);
+        refreshTokenRepository.save(refreshToken);
+
         return TokenInfo.builder()
                 .grantType("Bearer")
                 .accessToken(accessToken)
-                .refreshToken(refreshToken)
+                .refreshToken(refreshTokenString)
                 .build();
     }
 
@@ -82,6 +90,7 @@ public class JwtTokenProvider {
         UserDetailsImpl principal = memberRepository.findByEmail(claims.getSubject())
                 .map(UserDetailsImpl::new)
                 .orElseThrow(() -> new RuntimeException("존재하지 않는 회원입니다."));
+
         log.info("principal={}", principal);
         log.info("principal={}", principal.getMember());
         log.info("principal={}", principal.getUsername());
@@ -93,7 +102,13 @@ public class JwtTokenProvider {
     public boolean validateToken(String token) {
         try {
             Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token);
+            log.info("accessToken = {}", token);
+            if(refreshTokenRepository.hasKeyBlackList(token)){
+                log.info("이미 로그아웃된 회원의 요청입니다.");
+                return false;
+            }
             return true;
+
         } catch (io.jsonwebtoken.security.SecurityException | MalformedJwtException e) {
             log.info("Invalid JWT Token", e);
         } catch (ExpiredJwtException e) {
