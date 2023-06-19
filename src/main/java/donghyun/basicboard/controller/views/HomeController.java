@@ -1,4 +1,4 @@
-package donghyun.basicboard.controller;
+package donghyun.basicboard.controller.views;
 
 import donghyun.basicboard.controller.session.SessionConst;
 import donghyun.basicboard.domain.Member;

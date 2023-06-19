@@ -3,6 +3,8 @@ package donghyun.basicboard.controller.api;
 import donghyun.basicboard.dto.MemberJoinDto;
 import donghyun.basicboard.dto.MemberLoginRequestDto;
 import donghyun.basicboard.domain.Member;
+import donghyun.basicboard.dto.MyInfoDto;
+import donghyun.basicboard.dto.UpdateMemberDto;
 import donghyun.basicboard.login.TokenInfo;
 import donghyun.basicboard.service.MemberService;
 import donghyun.basicboard.service.PostService;
@@ -38,6 +40,7 @@ public class MemberApiController {
 
     @PostMapping("/login")
     public TokenInfo login(@RequestBody MemberLoginRequestDto memberLoginRequestDto){
+        log.info("login request start");
         String email = memberLoginRequestDto.getEmail();
         String password = memberLoginRequestDto.getPassword();
         TokenInfo tokenInfo = memberService.loginWithJwt(email, password);
@@ -47,6 +50,18 @@ public class MemberApiController {
     @PostMapping("/logout")
     public ResponseEntity<String> logout(@RequestHeader("Authorization") String accessTokenWithType){
         memberService.logout(accessTokenWithType);
+        return new ResponseEntity<>("OK", HttpStatus.OK);
+    }
+
+    @GetMapping("/myInfo")
+    public ResponseEntity<MyInfoDto> myInfo(){
+        MyInfoDto myInfo = memberService.myInfo();
+        return new ResponseEntity<>(myInfo, HttpStatus.OK);
+    }
+
+    @PostMapping("/update/myInfo")
+    public ResponseEntity<String> updateMember(@RequestBody UpdateMemberDto updateMemberDto){
+        memberService.updateMember(updateMemberDto);
         return new ResponseEntity<>("OK", HttpStatus.OK);
     }
 

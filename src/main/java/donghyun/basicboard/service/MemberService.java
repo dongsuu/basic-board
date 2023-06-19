@@ -2,7 +2,10 @@ package donghyun.basicboard.service;
 
 import donghyun.basicboard.domain.Member;
 import donghyun.basicboard.domain.RefreshToken;
-import donghyun.basicboard.dto.MemberJoinDto;
+import donghyun.basicboard.dto.*;
+import donghyun.basicboard.exception.BoardErrorCode;
+import donghyun.basicboard.exception.BoardException;
+import donghyun.basicboard.login.AuthenticationProvider;
 import donghyun.basicboard.login.JwtTokenProvider;
 import donghyun.basicboard.login.TokenInfo;
 import donghyun.basicboard.repository.MemberRepository;
@@ -15,9 +18,9 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.StringUtils;
 
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -50,7 +53,8 @@ public class MemberService {
 
     public Member login(String email, String password){
         Optional<Member> findMember = memberRepository.findByEmail(email);
-        return findMember.filter(m -> m.getPassword().equals(password)).orElse(null);
+        return findMember.filter(m -> m.getPassword().equals(password))
+                .orElseThrow(() -> new BoardException(BoardErrorCode.MEMBER_NOT_FOUND));
     }
 
     public TokenInfo loginWithJwt(String userId, String password){
@@ -65,7 +69,6 @@ public class MemberService {
         // 3. 인증정보를 기반으로 jwt token 생성
         TokenInfo tokenInfo = jwtTokenProvider.generateToken(authentication);
         return tokenInfo;
-
     }
 
     /**
@@ -99,7 +102,7 @@ public class MemberService {
     public void logout(String accessTokenWithType) {
         String email = AuthenticationProvider.getCurrentMember().getEmail();
         RefreshToken refreshToken = refreshTokenRepository.findByEmail(email)
-                .orElseThrow(() -> new RuntimeException("존재하지 않는 RefreshToken입니다."));
+                .orElseThrow(() -> new BoardException(BoardErrorCode.REFRESH_TOKEN_NOT_FOUND));
 
         String accessToken = accessTokenWithType.substring(7);
 
@@ -109,4 +112,32 @@ public class MemberService {
         refreshTokenRepository.remove(refreshToken);
     }
 
+    public MyInfoDto myInfo() {
+        Long currentMemberId = AuthenticationProvider.getCurrentMemberId();
+        Member currentMember = memberRepository.findById(currentMemberId);
+        return new MyInfoDto(
+                currentMember.getName(),
+                currentMember.getEmail(),
+                currentMember.getAge(),
+                currentMember.getNickname(),
+                currentMember.getPosts().stream()
+                        .map(p -> new PostDto(p.getId(), p.getTitle(), p.getContent(), p.getBoardName()))
+                        .collect(Collectors.toList()),
+                currentMember.getComments().stream()
+                        .map(c -> new CreateCommentDto(c.getContent()))
+                        .collect(Collectors.toList())
+        );
+    }
+
+    @Transactional
+    public void updateMember(UpdateMemberDto updateMemberDto) {
+        Long currentMemberId = AuthenticationProvider.getCurrentMemberId();
+        Member currentMember = memberRepository.findById(currentMemberId);
+        currentMember.updateMember(
+                updateMemberDto.getName(),
+                updateMemberDto.getNickname(),
+                updateMemberDto.getAge(),
+                updateMemberDto.getEmail()
+        );
+    }
 }

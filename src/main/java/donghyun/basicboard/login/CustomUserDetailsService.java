@@ -1,9 +1,8 @@
-package donghyun.basicboard.service;
+package donghyun.basicboard.login;
 
-import donghyun.basicboard.domain.Member;
+import donghyun.basicboard.login.UserDetailsImpl;
 import donghyun.basicboard.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;

@@ -1,4 +1,4 @@
-package donghyun.basicboard.service;
+package donghyun.basicboard.util;
 
 import donghyun.basicboard.domain.UploadFileEntity;
 import donghyun.basicboard.repository.UploadFileRepository;

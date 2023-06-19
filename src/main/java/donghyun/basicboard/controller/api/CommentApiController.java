@@ -4,7 +4,7 @@ import donghyun.basicboard.domain.Comment;
 import donghyun.basicboard.domain.Member;
 import donghyun.basicboard.domain.Post;
 import donghyun.basicboard.dto.CreateCommentDto;
-import donghyun.basicboard.service.AuthenticationProvider;
+import donghyun.basicboard.login.AuthenticationProvider;
 import donghyun.basicboard.service.CommentService;
 import donghyun.basicboard.service.MemberService;
 import donghyun.basicboard.service.PostService;

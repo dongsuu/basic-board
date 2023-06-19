@@ -1,4 +1,4 @@
-package donghyun.basicboard.service;
+package donghyun.basicboard.util;
 
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.ObjectMetadata;
@@ -32,7 +32,7 @@ public class S3Upload {
 
         amazonS3.putObject(bucket,  postId.toString() + "/" + s3FileName, multipartFile.getInputStream(), objectMetadata);
 
-        return amazonS3.getUrl(bucket, s3FileName).toString();
+        return amazonS3.getUrl(bucket, postId + "/" + s3FileName).toString();
     }
 
     public List<String> getUploadFiles(Post post) {

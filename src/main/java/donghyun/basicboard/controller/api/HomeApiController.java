@@ -2,7 +2,7 @@ package donghyun.basicboard.controller.api;
 
 import donghyun.basicboard.domain.Member;
 import donghyun.basicboard.dto.HomeDto;
-import donghyun.basicboard.service.AuthenticationProvider;
+import donghyun.basicboard.login.AuthenticationProvider;
 import donghyun.basicboard.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

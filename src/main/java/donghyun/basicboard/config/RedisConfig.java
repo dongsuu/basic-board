@@ -1,4 +1,4 @@
-package donghyun.basicboard;
+package donghyun.basicboard.config;
 
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;

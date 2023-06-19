@@ -1,4 +1,4 @@
-package donghyun.basicboard.controller;
+package donghyun.basicboard.controller.views;
 
 import donghyun.basicboard.controller.file.FileStore;
 import donghyun.basicboard.controller.form.CommentForm;
@@ -6,13 +6,12 @@ import donghyun.basicboard.controller.form.PostEditForm;
 import donghyun.basicboard.controller.form.PostForm;
 import donghyun.basicboard.controller.session.SessionConst;
 import donghyun.basicboard.domain.*;
-import donghyun.basicboard.dto.CreatePostDto;
 import donghyun.basicboard.dto.PostDto;
 import donghyun.basicboard.repository.UploadFileRepository;
 import donghyun.basicboard.service.CommentService;
 import donghyun.basicboard.service.MemberService;
 import donghyun.basicboard.service.PostService;
-import donghyun.basicboard.service.S3Upload;
+import donghyun.basicboard.util.S3Upload;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;

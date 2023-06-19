@@ -1,4 +1,4 @@
-package donghyun.basicboard.controller;
+package donghyun.basicboard.controller.views;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;

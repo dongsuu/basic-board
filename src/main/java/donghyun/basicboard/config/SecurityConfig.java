@@ -1,4 +1,4 @@
-package donghyun.basicboard;
+package donghyun.basicboard.config;
 
 import donghyun.basicboard.login.JwtAuthenticationFilter;
 import donghyun.basicboard.login.JwtTokenProvider;
@@ -20,6 +20,12 @@ public class SecurityConfig {
 
     private final JwtTokenProvider jwtTokenProvider;
 
+    private static final String[] PUBLIC_URI = {
+            "/apis/members/join",
+            "/apis/members/login",
+            "/apis/members/new",
+    };
+
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
@@ -28,7 +34,7 @@ public class SecurityConfig {
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
                 .authorizeRequests()
-                .antMatchers("/apis/members/login", "/apis/", "/apis/members/join", "/apis/members/new").permitAll()
+                .antMatchers(PUBLIC_URI).permitAll()
                 .antMatchers("/members/test").hasRole("USER")
                 .anyRequest().authenticated()
                 .and()

@@ -2,11 +2,17 @@ package donghyun.basicboard.controller.api;
 
 import donghyun.basicboard.domain.*;
 import donghyun.basicboard.dto.*;
+import donghyun.basicboard.login.AuthenticationProvider;
+import donghyun.basicboard.login.UserDetailsImpl;
 import donghyun.basicboard.service.*;
+import donghyun.basicboard.util.S3Upload;
+import donghyun.basicboard.util.UploadFileService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.lang.Nullable;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -30,18 +36,23 @@ public class PostApiController {
     }
 
     @PostMapping("/upload/new")
-    public ResponseEntity<String> createPostWithImages(@RequestPart("data") CreatePostDto createPostDto, @RequestPart("files")MultipartFile[] multipartFiles) throws IOException {
-        Member currentMember = AuthenticationProvider.getCurrentMember();
+    public ResponseEntity<String> createPostWithImages(
+            @RequestPart("data") CreatePostDto createPostDto,
+            @Nullable @RequestPart("files")MultipartFile[] multipartFiles,
+            @AuthenticationPrincipal UserDetailsImpl userDetails
+            ) throws IOException {
+//        Member currentMember = AuthenticationProvider.getCurrentMember();
+        Member loginMember = userDetails.getMember();
 
         Post post = Post.createPost(
                 createPostDto.getTitle(),
-                currentMember,
+                loginMember,
                 createPostDto.getBoardName(),
                 createPostDto.getContent()
         );
         postService.addPost(post);
 
-        if(multipartFiles.length != 0){
+        if(multipartFiles != null){
             for (MultipartFile multipartFile : multipartFiles) {
                 String s3FilePath = s3Upload.upload(multipartFile, post.getId());
                 UploadFileEntity uploadFileEntity = UploadFileEntity.createUploadFileEntity(s3FilePath, multipartFile.getOriginalFilename());
@@ -49,6 +60,7 @@ public class PostApiController {
                 uploadFileService.save(uploadFileEntity);
             }
         }
+
         return new ResponseEntity<>("OK", HttpStatus.OK);
     }
 

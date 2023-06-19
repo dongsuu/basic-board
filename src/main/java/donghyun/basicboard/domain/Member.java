@@ -17,7 +17,7 @@ import java.util.stream.Collectors;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Member extends DateEntity implements UserDetails {
+public class Member extends DateEntity{
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "member_id")
@@ -50,39 +50,15 @@ public class Member extends DateEntity implements UserDetails {
         return member;
     }
 
+    public void updateMember(String name, String nickname, int age, String email){
+        this.name = name;
+        this.nickname = nickname;
+        this.age = age;
+        this.email = email;
+    }
+
     public void changeNickname(String nickname){
         this.nickname = nickname;
     }
 
-    @Override
-    public Collection<? extends GrantedAuthority> getAuthorities() {
-        return this.roles.stream()
-                .map(SimpleGrantedAuthority::new)
-                .collect(Collectors.toList());
-    }
-
-    @Override
-    public String getUsername() {
-        return this.email;
-    }
-
-    @Override
-    public boolean isAccountNonExpired() {
-        return true;
-    }
-
-    @Override
-    public boolean isAccountNonLocked() {
-        return true;
-    }
-
-    @Override
-    public boolean isCredentialsNonExpired() {
-        return true;
-    }
-
-    @Override
-    public boolean isEnabled() {
-        return true;
-    }
 }

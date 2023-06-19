@@ -22,7 +22,7 @@ public class JwtAuthenticationFilter extends GenericFilterBean {
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
         // 1. Request Header에서 jwt token 추출
         String token = resolveToken((HttpServletRequest) request);
-        logger.info(((HttpServletRequest) request).getHeader("Authorization"));
+//        logger.info(((HttpServletRequest) request).getHeader("Authorization"));
         logger.info("filter= " + token);
 
         // 2. validation token으로 토큰 유효성 검사

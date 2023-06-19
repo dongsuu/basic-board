@@ -1,21 +1,19 @@
 package donghyun.basicboard.login;
 
 import donghyun.basicboard.domain.RefreshToken;
+import donghyun.basicboard.exception.BoardErrorCode;
+import donghyun.basicboard.exception.BoardException;
 import donghyun.basicboard.repository.MemberRepository;
 import donghyun.basicboard.repository.RefreshTokenRepository;
-import donghyun.basicboard.service.UserDetailsImpl;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
 import java.security.Key;
@@ -77,7 +75,7 @@ public class JwtTokenProvider {
         Claims claims = parseClaims(accessToken);
 
         if (claims.get("auth") == null) {
-            throw new RuntimeException("권한 정보가 없는 토큰입니다.");
+            throw new BoardException(BoardErrorCode.TOKEN_AUTHENTICATION_DENIED);
         }
 
         // 클레임에서 권한 정보 가져오기
@@ -89,7 +87,7 @@ public class JwtTokenProvider {
         // UserDetails 객체를 만들어서 Authentication 리턴
         UserDetailsImpl principal = memberRepository.findByEmail(claims.getSubject())
                 .map(UserDetailsImpl::new)
-                .orElseThrow(() -> new RuntimeException("존재하지 않는 회원입니다."));
+                .orElseThrow(() -> new BoardException(BoardErrorCode.MEMBER_NOT_FOUND));
 
         log.info("principal={}", principal);
         log.info("principal={}", principal.getMember());
